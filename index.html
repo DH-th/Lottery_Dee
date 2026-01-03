@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>โชคดีที่สุด - ตรวจหวย</title>
+<title>โชคดีที่สุด - เล่นลอตเตอรี่</title>
 
 <link rel="icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <div class="dropdown">
 <span>ลอตเตอรี่ ▾</span>
 <div class="dropdown-menu">
-<div onclick="showPage('lotto-now')"> 이번 당첨 번호</div>
+<div onclick="showPage('lotto-now')"> ตรวจผลรางวัล</div>
 </div>
 </div>
 <span onclick="showPage('recommend')">เลขแนะนำ</span>
@@ -77,9 +77,9 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <section id="home" class="page">
 <div class="card" style="text-align:center">
-<h2>🇹🇭 Lottery dee</h2>
-<p>태국 정부 로또 당첨 확인 서비스</p>
-<button onclick="showPage('lotto-now')">당첨 번호 확인</button>
+<h2>โชคดีที่สุด 🇹🇭</h2>
+<p>บริการตรวจผลสลากกินแบ่งรัฐบาลไทย</p>
+<button onclick="showPage('lotto-now')">ตรวจผลรางวัล</button>
 </div>
 <div class="ad-container">
     <ins class="adsbygoogle"
@@ -94,11 +94,11 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <section id="lotto-now" class="page">
 <div class="card">
-<h3>🎯 당첨 번호 확인</h3>
-<div class="date" id="drawDate">불러오는 중...</div>
+<h3>🎯 ตรวจผลรางวัล</h3>
+<div class="date" id="drawDate">กำลังโหลด...</div>
 <div class="input-box">
-<input id="myNum" maxlength="6" placeholder="6자리 번호 입력" type="tel">
-<button onclick="checkWin()">확인</button>
+<input id="myNum" maxlength="6" placeholder="กรอกเลข 6 หลัก" type="tel">
+<button onclick="checkWin()">ตรวจสอบ</button>
 </div>
 <div id="winResult" class="result"></div>
 <div id="lottoList"></div>
@@ -116,18 +116,18 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <section id="recommend" class="page">
 <div class="card" style="text-align:center">
-<h3>🎲 행운의 번호 추천</h3>
+<h3>🎲 แนะนำเลขนำโชค</h3>
 <h1 id="recNum" style="letter-spacing:6px">------</h1>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px">
-<button onclick="recommendN(1)">1자리</button>
-<button onclick="recommendN(2)">2자리</button>
-<button onclick="recommendN(3)">3자리</button>
-<button onclick="recommendN(4)">4자리</button>
-<button onclick="recommendN(5)">5자리</button>
-<button onclick="recommendN(6)">6자리</button>
+<button onclick="recommendN(1)">1ตัว</button>
+<button onclick="recommendN(2)">2ตัว</button>
+<button onclick="recommendN(3)">3ตัว</button>
+<button onclick="recommendN(4)">4ตัว</button>
+<button onclick="recommendN(5)">5ตัว</button>
+<button onclick="recommendN(6)">6ตัว</button>
 </div>
 <p style="font-size:13px;color:#777;margin-top:15px">
-※ 로또 당첨 번호와 무관한 운세 기반 추천 숫자입니다
+※ เป็นเลขแนะนำจากดวง ไม่เกี่ยวข้องกับผลสลากจริง
 </p>
 </div>
 <div class="ad-container">
@@ -143,9 +143,9 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <section id="fortune" class="page">
 <div class="card" style="text-align:center">
-<h3>🔮 오늘의 운세</h3>
+<h3>🔮 ดวงประจำวันนี้</h3>
 <div id="fortuneText" style="font-size:18px;margin:20px"></div>
-<button onclick="refreshFortune()">다시 보기</button>
+<button onclick="refreshFortune()">ดูใหม่อีกครั้ง</button>
 </div>
 <div class="ad-container">
     <ins class="adsbygoogle"
@@ -160,10 +160,10 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <section id="lucky" class="page">
 <div class="card" style="text-align:center">
-<h3>🍀 행운의 숫자 (3자리)</h3>
+<h3>🍀 เลขนำโชค (3자리)</h3>
 <div class="input-box"><input type="date" id="luckyBirth"></div>
-<div class="input-box"><input type="text" id="luckyName" placeholder="이름 또는 닉네임 (선택)"></div>
-<button onclick="makeLuckyNumber()">행운 숫자 받기</button>
+<div class="input-box"><input type="text" id="luckyName" placeholder="ชื่อหรือชื่อเล่น (การเลือก)"></div>
+<button onclick="makeLuckyNumber()">ได้รับเลขนำโชค</button>
 <div id="luckyResult" class="result"></div>
 </div>
 <div class="ad-container">
@@ -189,7 +189,7 @@ if(id==='fortune')refreshFortune();
 showPage('home');
 
 const PRIZE_MONEY={
-"รางวัลที่ 1":6000000,"รางวัลข้าง케ียงรางวัลที่ 1":100000,
+"รางวัลที่ 1":6000000,"รางวัลข้างเคียงรางวัลที่ 1":100000,
 "รางวัลที่ 2":200000,"รางวัลที่ 3":80000,
 "รางวัลที่ 4":40000,"รางวัลที่ 5":20000,
 "รางวัลเลขหน้า 3 ตัว":4000,"รางวัลเลขท้าย 3 ตัว":4000,"รางวัลเลขท้าย 2 ตัว":2000
@@ -201,13 +201,13 @@ fetch("https://lotto.api.rayriffy.com/latest")
 .then(r=>r.json()).then(j=>{lottoData=j.response;renderLotto(lottoData);});
 
 function renderLotto(data){
-document.getElementById("drawDate").innerText=`추첨일 : ${data.date}`;
+document.getElementById("drawDate").innerText=`วันจับสลาก : ${data.date}`;
 const box=document.getElementById("lottoList");box.innerHTML="";
 const acc=document.createElement("div");acc.className="accordion";
-const h=document.createElement("div");h.className="acc-header";h.innerText="📂 3~5등 당첨 번호 열기";
+const h=document.createElement("div");h.className="acc-header";h.innerText="📂 เปิดหมายเลขรางวัลที่ 3-5";
 const b=document.createElement("div");b.className="acc-body";
 h.onclick=()=>{b.style.display=b.style.display==="none"?"block":"none";
-h.innerText=b.style.display==="block"?"📂 3~5등 당첨 번호 닫기":"📂 3~5등 당첨 번호 열기"};
+h.innerText=b.style.display==="block"?"📂 ปิดหมายเลขรางวัลที่ 3-5":"📂 เปิดหมายเลขรางวัลที่ 3-5"};
 const mk=(n,nums)=>{const d=document.createElement("div");d.className="item";
 d.innerHTML=`<div class="item-title">${n}</div><div class="num-container">${
 [...nums].sort().map(x=>`<span class="num-unit">${x}</span>`).join("")
@@ -220,7 +220,7 @@ data.runningNumbers.forEach(r=>box.appendChild(mk(r.name,r.number)));
 function checkWin(){
 const n=document.getElementById("myNum").value;
 const box=document.getElementById("winResult");
-if(n.length!==6)return alert("6자리 번호를 정확히 입력해주세요.");
+if(n.length!==6)return alert("กรุณากรอกหมายเลข 6 หลักให้ถูกต้อง.");
 let w=[],t=0;
 lottoData.prizes.forEach(p=>{if(p.number.includes(n)){w.push(p.name);t+=PRIZE_MONEY[p.name]||0}});
 lottoData.runningNumbers.forEach(r=>{
@@ -229,7 +229,7 @@ if(r.name.includes("ท้าย 3")&&r.number.includes(n.slice(-3)))t+=4000,w.p
 if(r.name.includes("ท้าย 2")&&r.number.includes(n.slice(-2)))t+=2000,w.push(r.name);
 });
 box.style.display="block";box.style.background=w.length?"var(--success)":"var(--fail)";
-box.innerHTML=w.length?`🎉 당첨!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 미당첨입니다.";
+box.innerHTML=w.length?`🎉 ถูกแล้ว!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 ยังไม่ได้ถูก";
 }
 
 function recommendN(len){
@@ -245,7 +245,7 @@ fortunes[Math.floor(Math.random()*fortunes.length)];
 function makeLuckyNumber(){
 const b=document.getElementById("luckyBirth").value;
 const n=document.getElementById("luckyName").value;
-if(!b)return alert("생년월일 입력");
+if(!b)return alert("ป้อนวันเดือนปีเกิด");
 const bn=b.replaceAll("-","").split("").reduce((a,c)=>a+Number(c),0)%9+1;
 const d=new Date();const dn=(d.getDate()+d.getMonth()+1)%9+1;
 const nn=n?n.length%10:0;
@@ -257,4 +257,5 @@ r.innerHTML=`<h1 style="letter-spacing:6px">${bn}${dn}${(bn+dn+nn)%10}</h1>`;
 
 </body>
 </html>
+
 
