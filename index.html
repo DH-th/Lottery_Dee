@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lottery dee - 태국 로또</title>
+<title>Chokdee Lottery</title>
 
 <link rel="icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .acc-body{display:none;background:#fafafa;padding:0 14px}
 
 /* 광고 여백 설정 */
-.ad-container { margin: 20px 0; text-align: center; overflow: hidden; }
+.ad-container { margin: 25px 0; text-align: center; min-height: 100px; }
 </style>
 </head>
 
@@ -60,7 +60,7 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <div class="nav-inner">
 <div class="logo" onclick="showPage('home')"><img src="logo.png"></div>
 <nav class="menu">
-<span onclick="showPage('home')">메인</span>
+<span onclick="showPage('home')">Home</span>
 <div class="dropdown">
 <span>로터리 ▾</span>
 <div class="dropdown-menu">
@@ -75,21 +75,20 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 
 <main>
 
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="auto"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
 <section id="home" class="page">
 <div class="card" style="text-align:center">
 <h2>🇹🇭 Lottery dee</h2>
 <p>태국 정부 로또 당첨 확인 서비스</p>
 <button onclick="showPage('lotto-now')">당첨 번호 확인</button>
+</div>
+<div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6972769827165057"
+         data-ad-slot="4871459069"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 </section>
 
@@ -101,19 +100,17 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <input id="myNum" maxlength="6" placeholder="6자리 번호 입력" type="tel">
 <button onclick="checkWin()">확인</button>
 </div>
-
+<div id="winResult" class="result"></div>
+<div id="lottoList"></div>
+</div>
 <div class="ad-container">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-format="fluid"
-         data-ad-layout-key="-fb+5w+4e-db+86"
          data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="auto"></ins>
+         data-ad-slot="4871459069"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
-<div id="winResult" class="result"></div>
-<div id="lottoList"></div>
 </div>
 </section>
 
@@ -133,6 +130,15 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 ※ 로또 당첨 번호와 무관한 운세 기반 추천 숫자입니다
 </p>
 </div>
+<div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6972769827165057"
+         data-ad-slot="4871459069"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 </section>
 
 <section id="fortune" class="page">
@@ -140,6 +146,15 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <h3>🔮 오늘의 운세</h3>
 <div id="fortuneText" style="font-size:18px;margin:20px"></div>
 <button onclick="refreshFortune()">다시 보기</button>
+</div>
+<div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6972769827165057"
+         data-ad-slot="4871459069"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 </section>
 
@@ -151,17 +166,16 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <button onclick="makeLuckyNumber()">행운 숫자 받기</button>
 <div id="luckyResult" class="result"></div>
 </div>
-</section>
-
 <div class="ad-container">
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="auto"
+         data-ad-slot="4871459069"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
+</section>
 
 </main>
 
