@@ -6,7 +6,7 @@
 <title>โชคดีที่สุด - เล่นลอตเตอรี่</title>
 
 <link rel="icon" href="logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6972769827165057" crossorigin="anonymous"></script>
 
@@ -14,7 +14,7 @@
 :root{
 --primary:#f28482;--secondary:#84a59d;--accent:#457b9d;
 --bg:#f7f8fa;--card:#fff;--success:#c7e7d3;--fail:#f8d7da;
---thai-gold: #C5A059; --thai-red: #8B2323;
+--thai-gold: #C5A059; --thai-red: #8B2323; --thai-cream: #FDFBF7;
 }
 body{margin:0;font-family:'Noto Sans KR','Noto Sans Thai',sans-serif;background:var(--bg)}
 
@@ -50,7 +50,7 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .acc-body{display:none;background:#fafafa;padding:0 14px}
 .ad-container { margin: 25px 0; text-align: center; min-height: 100px; }
 
-/* 🐘 룰렛 전용 스타일 (추가 기능 포함) */
+/* 🐘 룰렛 전용 스타일 */
 .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto 30px; }
 .elephant-bg {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -66,6 +66,24 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .r-input-item span { font-size: 13px; color: #aaa; width: 25px; }
 .btn-spin { width: 100%; padding: 16px; background: var(--thai-red); color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
 .reset-link { font-size: 12px; color: #999; text-decoration: underline; cursor: pointer; display: block; margin-top: 10px; text-align: right; }
+
+/* 🪜 사다리 타기 전용 스타일 */
+.ladder-board { position: relative; margin: 25px 0; }
+.header-nodes, .footer-nodes { display: flex; justify-content: space-around; }
+.node-btn { width: 44px; height: 44px; border-radius: 14px; border: none; background: var(--thai-red); color: gold; font-weight: 700; cursor: pointer; transition: 0.3s; z-index: 60; position: relative; }
+.result-input { width: 55px; border: none; border-bottom: 2px solid #F0F0F0; text-align: center; font-size: 14px; font-weight: 700; padding: 8px 0; background: transparent; color: #444; }
+.canvas-container { position: relative; width: 100%; height: 420px; margin: 15px 0; }
+#ladderCanvas { width: 100%; height: 100%; display: block; }
+#elephantSprite { 
+    position: absolute; font-size: 42px; z-index: 100; pointer-events: none; display: none;
+    transform-origin: center bottom;
+    transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+}
+#blindLayer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); z-index: 50; display: flex; align-items: center; justify-content: center; border-radius: 20px; transition: 0.7s; font-weight: bold; color: var(--thai-gold); letter-spacing: 2px; font-size: 14px; }
+#blindLayer.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+.action-bar { display: flex; gap: 12px; margin-top: 30px; }
+.btn-main { flex: 1; padding: 16px; border: none; border-radius: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; }
+.btn-gold { background: var(--thai-gold); color: white; }
 
 /* 당첨 팝업 레이어 */
 .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
@@ -97,6 +115,7 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <span onclick="showPage('fortune')">ดวงของวันนี้</span>
 <span onclick="showPage('lucky')">เลขนำโชค</span>
 <span onclick="showPage('roulette')" style="color:var(--thai-red)">🐘 วงล้อ</span>
+<span onclick="showPage('ladder')" style="color:var(--thai-gold)">🪜 บันได</span>
 </nav>
 </div>
 </header>
@@ -173,6 +192,29 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 </div>
 </section>
 
+<section id="ladder" class="page">
+    <div class="card" style="text-align:center">
+        <h3 style="color:var(--thai-red);">🐘 บันไดช้าง (사다리)</h3>
+        <div style="color:var(--thai-gold); font-size:11px; font-weight:700; letter-spacing: 2px; margin-bottom: 15px;">PATH TRACKING MODE</div>
+
+        <div class="ladder-board">
+            <div id="headerBox" class="header-nodes"></div>
+            <div class="canvas-container">
+                <div id="blindLayer">🔒 CLICK TO START</div>
+                <div id="elephantSprite">🐘</div>
+                <canvas id="ladderCanvas"></canvas>
+            </div>
+            <div id="footerBox" class="footer-nodes"></div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-main btn-gold" onclick="adjustSize(1)">PLAYER (+)</button>
+            <button class="btn-main btn-gold" onclick="adjustSize(-1)">REMOVE (-)</button>
+            <button class="btn-main" onclick="initLadder()" style="background:#f5f5f5;">RESET</button>
+        </div>
+    </div>
+</section>
+
 <div class="ad-container">
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6972769827165057" data-ad-slot="4871459069" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -194,10 +236,11 @@ const t=document.getElementById(id);
 if(t)t.style.display='block';
 if(id==='fortune')refreshFortune();
 if(id==='roulette')drawR();
+if(id==='ladder') initLadder();
 }
 showPage('home');
 
-// --- 기존 로또/운세 로직 (수정 금지 영역) ---
+// --- 로또/운세 로직 ---
 const PRIZE_MONEY={"รางวัลที่ 1":6000000,"รางวัลข้างเคียงรางวัลที่ 1":100000,"รางวัลที่ 2":200000,"รางวัลที่ 3":80000,"รางวัลที่ 4":40000,"รางวัลที่ 5":20000,"รางวัลเลขหน้า 3 ตัว":4000,"รางวัลเลขท้าย 3 ตัว":4000,"รางวัลเลขท้าย 2 ตัว":2000};
 let lottoData=null;
 fetch("https://lotto.api.rayriffy.com/latest").then(r=>r.json()).then(j=>{lottoData=j.response;renderLotto(lottoData);});
@@ -226,7 +269,7 @@ if(r.name.includes("ท้าย 3")&&r.number.includes(n.slice(-3)))t+=4000,w.p
 if(r.name.includes("ท้าย 2")&&r.number.includes(n.slice(-2)))t+=2000,w.push(r.name);
 });
 box.style.display="block";box.style.background=w.length?"var(--success)":"var(--fail)";
-box.innerHTML=w.length?`🎉 ถูกแล้ว!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 아직 운이 오지 않았어요";
+box.innerHTML=w.length?`🎉 ถูกแล้ว!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 ยังไม่ถูกรางวัลในรอบนี้";
 }
 
 function recommendN(len){document.getElementById("recNum").innerText=Math.floor(Math.random()*10**len).toString().padStart(len,'0');}
@@ -241,9 +284,9 @@ const r=document.getElementById("luckyResult");r.style.display="block";r.style.b
 r.innerHTML=`<h1 style="letter-spacing:6px">${bn}${dn}${(bn+dn+nn)%10}</h1>`;
 }
 
-// --- 🐘 룰렛 로직 (추가 기능 포함) ---
-const canvas = document.getElementById('rouletteCanvas');
-const ctx = canvas.getContext('2d');
+// --- 🐘 룰렛 로직 ---
+const canvasR = document.getElementById('rouletteCanvas');
+const ctxR = canvasR.getContext('2d');
 const rInputs = document.getElementById('rouletteInputs');
 const rColors = ["rgba(255,255,255,0.75)", "rgba(242,240,235,0.75)", "rgba(220,220,220,0.75)", "rgba(235,230,220,0.75)"];
 let isSpinning = false;
@@ -262,17 +305,17 @@ function handleRInput(el) {
 
 function drawR() {
     const items = Array.from(document.querySelectorAll('.item-input')).map(i=>i.value.trim()).filter(v=>v!=="");
-    ctx.clearRect(0,0,300,300);
+    ctxR.clearRect(0,0,300,300);
     if(items.length < 2) {
-        ctx.beginPath(); ctx.fillStyle="rgba(255,255,255,0.5)"; ctx.arc(150,150,150,0,2*Math.PI); ctx.fill();
+        ctxR.beginPath(); ctxR.fillStyle="rgba(255,255,255,0.5)"; ctxR.arc(150,150,150,0,2*Math.PI); ctxR.fill();
         return;
     }
     const arc = (2*Math.PI)/items.length;
     items.forEach((text, i) => {
         const angle = i*arc;
-        ctx.beginPath(); ctx.fillStyle=rColors[i%rColors.length]; ctx.moveTo(150,150); ctx.arc(150,150,150,angle,angle+arc); ctx.fill();
-        ctx.strokeStyle="rgba(0,0,0,0.05)"; ctx.stroke();
-        ctx.save(); ctx.translate(150,150); ctx.rotate(angle+arc/2); ctx.textAlign="right"; ctx.fillStyle="#333"; ctx.font="bold 15px Tahoma"; ctx.fillText(text, 140, 5); ctx.restore();
+        ctxR.beginPath(); ctxR.fillStyle=rColors[i%rColors.length]; ctxR.moveTo(150,150); ctxR.arc(150,150,150,angle,angle+arc); ctxR.fill();
+        ctxR.strokeStyle="rgba(0,0,0,0.05)"; ctxR.stroke();
+        ctxR.save(); ctxR.translate(150,150); ctxR.rotate(angle+arc/2); ctxR.textAlign="right"; ctxR.fillStyle="#333"; ctxR.font="bold 15px Tahoma"; ctxR.fillText(text, 140, 5); ctxR.restore();
     });
 }
 
@@ -282,14 +325,12 @@ function spinR() {
     if(isSpinning) return;
     isSpinning = true;
     const rot = Math.floor(Math.random()*360) + 3600; currRot += rot;
-    canvas.style.transform = `rotate(${currRot}deg)`;
+    canvasR.style.transform = `rotate(${currRot}deg)`;
     setTimeout(() => {
         isSpinning = false;
         const actual = currRot % 360;
         const arcDeg = 360 / items.length;
         const idx = Math.floor(((360 - (actual % 360) + 270) % 360) / arcDeg);
-        
-        // 팝업 띄우기
         document.getElementById('winnerName').innerText = items[idx % items.length] + "!";
         document.getElementById('winnerPopup').style.display = 'block';
         document.getElementById('overlay').style.display = 'block';
@@ -308,6 +349,171 @@ function resetR() {
         <div class="r-input-item"><span>2</span><input type="text" class="item-input" placeholder="รายการที่ 2" oninput="handleRInput(this)"></div>
     `;
     drawR();
+}
+
+// --- 🪜 사다리 타기 로직 ---
+let ladderCount = 4;
+let legs = [];
+let ladderMoving = false;
+let historyPath = [];
+const ladderCanvas = document.getElementById('ladderCanvas');
+const ctxL = ladderCanvas.getContext('2d');
+const sprite = document.getElementById('elephantSprite');
+const blind = document.getElementById('blindLayer');
+
+function initLadder() {
+    ladderMoving = false;
+    historyPath = [];
+    sprite.style.display = 'none';
+    blind.classList.remove('hidden');
+    const container = document.querySelector('.canvas-container');
+    ladderCanvas.width = container.clientWidth;
+    ladderCanvas.height = container.clientHeight;
+    
+    const hBox = document.getElementById('headerBox');
+    const fBox = document.getElementById('footerBox');
+    hBox.innerHTML = ''; fBox.innerHTML = '';
+    
+    for(let i=0; i<ladderCount; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'node-btn';
+        btn.innerText = String.fromCharCode(65 + i);
+        btn.onclick = () => runLadder(i);
+        hBox.appendChild(btn);
+        
+        const input = document.createElement('input');
+        input.className = 'result-input';
+        input.value = (i === 0) ? "WIN" : "X";
+        fBox.appendChild(input);
+    }
+    generateLegs();
+    renderLadder();
+}
+
+function adjustSize(n) { if(ladderCount + n >= 2 && ladderCount + n <= 10) { ladderCount += n; initLadder(); } }
+
+function generateLegs() {
+    legs = [];
+    const rows = 6;
+    for(let i=0; i<ladderCount-1; i++) {
+        let legInColumn = 0;
+        for(let j=0; j<rows; j++) {
+            if(Math.random() > 0.75 && legInColumn < 3) { 
+                legs.push({ col: i, y: Math.floor((j+1) * (ladderCanvas.height / (rows + 1))), used: false });
+                legInColumn++;
+            }
+        }
+        if(legInColumn === 0) {
+            const randomRow = Math.floor(Math.random() * rows);
+            legs.push({ col: i, y: Math.floor((randomRow+1) * (ladderCanvas.height / (rows + 1))), used: false });
+        }
+    }
+    legs.sort((a, b) => a.y - b.y);
+}
+
+function renderLadder() {
+    ctxL.clearRect(0, 0, ladderCanvas.width, ladderCanvas.height);
+    const gap = ladderCanvas.width / (ladderCount + 1);
+    
+    ctxL.strokeStyle = "#F2F2F2";
+    ctxL.lineWidth = 5;
+    for(let i=1; i<=ladderCount; i++) {
+        ctxL.beginPath(); ctxL.moveTo(i*gap, 0); ctxL.lineTo(i*gap, ladderCanvas.height); ctxL.stroke();
+    }
+    ctxL.strokeStyle = "#C5A059";
+    ctxL.lineWidth = 4;
+    legs.forEach(l => {
+        ctxL.beginPath(); ctxL.moveTo((l.col+1)*gap, l.y); ctxL.lineTo((l.col+2)*gap, l.y); ctxL.stroke();
+    });
+
+    if(historyPath.length > 1) {
+        ctxL.strokeStyle = "#8B2323";
+        ctxL.lineWidth = 6;
+        ctxL.lineCap = "round";
+        ctxL.lineJoin = "round";
+        ctxL.beginPath();
+        ctxL.moveTo(historyPath[0].x, historyPath[0].y);
+        for(let i=1; i<historyPath.length; i++) {
+            ctxL.lineTo(historyPath[i].x, historyPath[i].y);
+        }
+        ctxL.stroke();
+    }
+}
+
+async function runLadder(startIdx) {
+    if(ladderMoving) return;
+    ladderMoving = true;
+    historyPath = [];
+    blind.classList.add('hidden');
+    legs.forEach(l => l.used = false);
+    
+    const gap = ladderCanvas.width / (ladderCount + 1);
+    let curX = (startIdx + 1) * gap;
+    let curY = 0;
+    let curCol = startIdx;
+
+    historyPath.push({x: curX, y: curY});
+    sprite.style.display = 'block';
+    sprite.style.left = curX + 'px';
+    sprite.style.top = '0px';
+
+    const step = 3; 
+
+    const animate = () => {
+        return new Promise((res) => {
+            const frame = async () => {
+                curY += step;
+                historyPath.push({x: curX, y: curY});
+
+                for(let l of legs) {
+                    if(!l.used && Math.abs(l.y - curY) <= step) {
+                        if(l.col === curCol || l.col === curCol - 1) {
+                            l.used = true;
+                            curY = l.y;
+                            historyPath.push({x: curX, y: curY});
+
+                            if(l.col === curCol) {
+                                curCol++;
+                                sprite.style.transform = "translate(-50%, -80%) scaleX(-1) rotate(10deg)";
+                            } else {
+                                curCol--;
+                                sprite.style.transform = "translate(-50%, -80%) scaleX(1) rotate(-10deg)";
+                            }
+                            
+                            curX = (curCol + 1) * gap;
+                            historyPath.push({x: curX, y: curY});
+                            sprite.style.left = curX + 'px';
+                            sprite.style.top = curY + 'px';
+                            
+                            await new Promise(r => setTimeout(r, 450));
+                            sprite.style.transform = "translate(-50%, -80%) rotate(0deg)";
+                        }
+                    }
+                }
+                sprite.style.top = curY + 'px';
+                sprite.style.left = curX + 'px';
+                renderLadder();
+
+                if(curY < ladderCanvas.height) {
+                    requestAnimationFrame(frame);
+                } else {
+                    res(curCol);
+                }
+            };
+            requestAnimationFrame(frame);
+        });
+    };
+
+    const resultCol = await animate();
+    const results = document.querySelectorAll('.result-input');
+    
+    // 결과 팝업 적용 (룰렛과 동일)
+    setTimeout(() => {
+        document.getElementById('winnerName').innerText = results[resultCol].value + "!";
+        document.getElementById('winnerPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        ladderMoving = false;
+    }, 500);
 }
 </script>
 
