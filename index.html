@@ -13,15 +13,15 @@
 <style>
 :root{
 --primary:#f28482;--secondary:#84a59d;--accent:#457b9d;
---bg:#f7f8fa;--card:#fff;--success:#c7e7d3;--fail:#f8d7da
+--bg:#f7f8fa;--card:#fff;--success:#c7e7d3;--fail:#f8d7da;
+--thai-gold: #C5A059; --thai-red: #8B2323;
 }
 body{margin:0;font-family:'Noto Sans KR','Noto Sans Thai',sans-serif;background:var(--bg)}
 
-/* 상단 네비게이션 최적화 (390px 대응) */
 .top-nav{position:sticky;top:0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:1000}
 .nav-inner{max-width:900px;margin:auto;padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:56px}
 .logo img{height:45px;display:block;cursor:pointer}
-.menu{display:flex;gap:12px;font-weight:600;font-size:13px;white-space:nowrap} /* 폰트 크기 및 간격 축소 */
+.menu{display:flex;gap:12px;font-weight:600;font-size:13px;white-space:nowrap}
 .menu span{cursor:pointer}
 .menu span:hover{color:var(--primary)}
 
@@ -48,9 +48,35 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .accordion{margin-top:15px;border:1px solid #ddd;border-radius:12px;overflow:hidden}
 .acc-header{background:var(--accent);color:#fff;padding:14px;font-weight:600;cursor:pointer;text-align:center}
 .acc-body{display:none;background:#fafafa;padding:0 14px}
-
-/* 광고 여백 설정 */
 .ad-container { margin: 25px 0; text-align: center; min-height: 100px; }
+
+/* 🐘 룰렛 전용 스타일 (추가 기능 포함) */
+.roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto 30px; }
+.elephant-bg {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 120px; height: 120px; opacity: 0.25; z-index: 1;
+    background: url('https://img.icons8.com/ios-filled/200/666666/elephant.png') no-repeat center/contain;
+}
+#rouletteCanvas { position: relative; z-index: 2; border: 6px solid var(--thai-gold); border-radius: 50%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: transparent; }
+.pointer {
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 10;
+    width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid var(--thai-red);
+}
+.r-input-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0; }
+.r-input-item span { font-size: 13px; color: #aaa; width: 25px; }
+.btn-spin { width: 100%; padding: 16px; background: var(--thai-red); color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+.reset-link { font-size: 12px; color: #999; text-decoration: underline; cursor: pointer; display: block; margin-top: 10px; text-align: right; }
+
+/* 당첨 팝업 레이어 */
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
+#winnerPopup {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+    z-index: 2000; text-align: center; width: 80%; max-width: 300px; border: 5px solid var(--thai-gold);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+#winnerPopup h1 { font-size: 2.2rem; margin: 15px 0; color: var(--thai-red); }
 </style>
 </head>
 
@@ -69,26 +95,18 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 </div>
 <span onclick="showPage('recommend')">เลขแนะนำ</span>
 <span onclick="showPage('fortune')">ดวงของวันนี้</span>
-<span onclick="showPage('lucky')">เลขนำโชค</span> </nav>
+<span onclick="showPage('lucky')">เลขนำโชค</span>
+<span onclick="showPage('roulette')" style="color:var(--thai-red)">🐘 วงล้อ</span>
+</nav>
 </div>
 </header>
 
 <main>
-
 <section id="home" class="page">
 <div class="card" style="text-align:center">
 <h2>โชคดีที่สุด 🇹🇭</h2>
 <p>บริการตรวจผลสลากกินแบ่งรัฐบาลไทย</p>
 <button onclick="showPage('lotto-now')">ตรวจผลรางวัล</button>
-</div>
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="4871459069"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 </section>
 
@@ -102,15 +120,6 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 </div>
 <div id="winResult" class="result"></div>
 <div id="lottoList"></div>
-</div>
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="4871459069"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 </section>
 
@@ -126,19 +135,6 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <button onclick="recommendN(5)">5ตัว</button>
 <button onclick="recommendN(6)">6ตัว</button>
 </div>
-<p style="font-size:13px;color:#777;margin-top:15px">
-※ เป็นเลขแนะนำจากดวง ไม่เกี่ยวข้องกับผลสลากจริง
-</p>
-</div>
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="4871459069"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 </section>
 
 <section id="fortune" class="page">
@@ -147,58 +143,64 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <div id="fortuneText" style="font-size:18px;margin:20px"></div>
 <button onclick="refreshFortune()">ดูใหม่อีกครั้ง</button>
 </div>
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="4871459069"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 </section>
 
 <section id="lucky" class="page">
 <div class="card" style="text-align:center">
-<h3>🍀 เลขนำโชค (3자리)</h3>
+<h3>🍀 เลขนำโชค</h3>
 <div class="input-box"><input type="date" id="luckyBirth"></div>
-<div class="input-box"><input type="text" id="luckyName" placeholder="ชื่อหรือชื่อเล่น (การเลือก)"></div>
+<div class="input-box"><input type="text" id="luckyName" placeholder="ชื่อหรือชื่อเล่น"></div>
 <button onclick="makeLuckyNumber()">ได้รับเลขนำโชค</button>
 <div id="luckyResult" class="result"></div>
 </div>
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6972769827165057"
-         data-ad-slot="4871459069"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</section>
+
+<section id="roulette" class="page">
+<div class="card" style="text-align:center">
+<h3>🐘 วงล้อช้างนำโชค</h3>
+<p style="font-size:13px; color:#888;">กรอกรายการด้านล่างเพื่อเสี่ยงทาย</p>
+<div class="roulette-wrapper">
+    <div class="pointer"></div>
+    <div class="elephant-bg"></div>
+    <canvas id="rouletteCanvas" width="300" height="300"></canvas>
+</div>
+<div id="rouletteInputs" style="text-align:left; max-width:300px; margin:auto;">
+    <div class="r-input-item"><span>1</span><input type="text" class="item-input" placeholder="รายการที่ 1" oninput="handleRInput(this)"></div>
+    <div class="r-input-item"><span>2</span><input type="text" class="item-input" placeholder="รายการที่ 2" oninput="handleRInput(this)"></div>
+</div>
+<span class="reset-link" onclick="resetR()">ล้างข้อมูลทั้งหมด (초기화)</span>
+<button class="btn-spin" onclick="spinR()">หมุนวงล้อ!</button>
 </div>
 </section>
 
+<div class="ad-container">
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6972769827165057" data-ad-slot="4871459069" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 </main>
 
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div id="winnerPopup">
+    <p>ยินดีด้วย! (축하합니다)</p>
+    <h1 id="winnerName"></h1>
+    <button onclick="closePopup()" style="background:var(--thai-red); width:100%; padding:12px;">OK</button>
+</div>
+
 <script>
+// --- 공통 페이지 전환 ---
 function showPage(id){
 document.querySelectorAll('.page').forEach(p=>p.style.display='none');
 const t=document.getElementById(id);
 if(t)t.style.display='block';
 if(id==='fortune')refreshFortune();
+if(id==='roulette')drawR();
 }
 showPage('home');
 
-const PRIZE_MONEY={
-"รางวัลที่ 1":6000000,"รางวัลข้างเคียงรางวัลที่ 1":100000,
-"รางวัลที่ 2":200000,"รางวัลที่ 3":80000,
-"รางวัลที่ 4":40000,"รางวัลที่ 5":20000,
-"รางวัลเลขหน้า 3 ตัว":4000,"รางวัลเลขท้าย 3 ตัว":4000,"รางวัลเลขท้าย 2 ตัว":2000
-};
-
+// --- 기존 로또/운세 로직 (수정 금지 영역) ---
+const PRIZE_MONEY={"รางวัลที่ 1":6000000,"รางวัลข้างเคียงรางวัลที่ 1":100000,"รางวัลที่ 2":200000,"รางวัลที่ 3":80000,"รางวัลที่ 4":40000,"รางวัลที่ 5":20000,"รางวัลเลขหน้า 3 ตัว":4000,"รางวัลเลขท้าย 3 ตัว":4000,"รางวัลเลขท้าย 2 ตัว":2000};
 let lottoData=null;
-
-fetch("https://lotto.api.rayriffy.com/latest")
-.then(r=>r.json()).then(j=>{lottoData=j.response;renderLotto(lottoData);});
+fetch("https://lotto.api.rayriffy.com/latest").then(r=>r.json()).then(j=>{lottoData=j.response;renderLotto(lottoData);});
 
 function renderLotto(data){
 document.getElementById("drawDate").innerText=`วันจับสลาก : ${data.date}`;
@@ -206,20 +208,15 @@ const box=document.getElementById("lottoList");box.innerHTML="";
 const acc=document.createElement("div");acc.className="accordion";
 const h=document.createElement("div");h.className="acc-header";h.innerText="📂 เปิดหมายเลขรางวัลที่ 3-5";
 const b=document.createElement("div");b.className="acc-body";
-h.onclick=()=>{b.style.display=b.style.display==="none"?"block":"none";
-h.innerText=b.style.display==="block"?"📂 ปิดหมายเลขรางวัลที่ 3-5":"📂 เปิดหมายเลขรางวัลที่ 3-5"};
-const mk=(n,nums)=>{const d=document.createElement("div");d.className="item";
-d.innerHTML=`<div class="item-title">${n}</div><div class="num-container">${
-[...nums].sort().map(x=>`<span class="num-unit">${x}</span>`).join("")
-}</div>`;return d};
+h.onclick=()=>{b.style.display=b.style.display==="none"?"block":"none";h.innerText=b.style.display==="block"?"📂 ปิดหมายเลขรางวัลที่ 3-5":"📂 เปิดหมายเลขรางวัลที่ 3-5"};
+const mk=(n,nums)=>{const d=document.createElement("div");d.className="item";d.innerHTML=`<div class="item-title">${n}</div><div class="num-container">${[...nums].sort().map(x=>`<span class="num-unit">${x}</span>`).join("")}</div>`;return d};
 data.prizes.forEach(p=>{(p.name.match(/[345]/)?b:box).appendChild(mk(p.name,p.number))});
 acc.append(h,b);box.appendChild(acc);
 data.runningNumbers.forEach(r=>box.appendChild(mk(r.name,r.number)));
 }
 
 function checkWin(){
-const n=document.getElementById("myNum").value;
-const box=document.getElementById("winResult");
+const n=document.getElementById("myNum").value; const box=document.getElementById("winResult");
 if(n.length!==6)return alert("กรุณากรอกหมายเลข 6 หลักให้ถูกต้อง.");
 let w=[],t=0;
 lottoData.prizes.forEach(p=>{if(p.number.includes(n)){w.push(p.name);t+=PRIZE_MONEY[p.name]||0}});
@@ -229,33 +226,90 @@ if(r.name.includes("ท้าย 3")&&r.number.includes(n.slice(-3)))t+=4000,w.p
 if(r.name.includes("ท้าย 2")&&r.number.includes(n.slice(-2)))t+=2000,w.push(r.name);
 });
 box.style.display="block";box.style.background=w.length?"var(--success)":"var(--fail)";
-box.innerHTML=w.length?`🎉 ถูกแล้ว!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 ยังไม่ได้ถูก";
+box.innerHTML=w.length?`🎉 ถูกแล้ว!<br>${w.join("<br>")}<hr><b>${t.toLocaleString()} ฿</b>`:"😢 아직 운이 오지 않았어요";
 }
 
-function recommendN(len){
-document.getElementById("recNum").innerText=Math.floor(Math.random()*10**len).toString().padStart(len,'0');
-}
-
+function recommendN(len){document.getElementById("recNum").innerText=Math.floor(Math.random()*10**len).toString().padStart(len,'0');}
 const fortunes=["오늘은 행운의 날 🍀","뜻밖의 기회 ✨","지출 주의 💰","로또 사기 좋은 날 🎟️","차분함이 행운 🧘"];
-function refreshFortune(){
-document.getElementById("fortuneText").innerText=
-fortunes[Math.floor(Math.random()*fortunes.length)];
-}
-
+function refreshFortune(){document.getElementById("fortuneText").innerText=fortunes[Math.floor(Math.random()*fortunes.length)];}
 function makeLuckyNumber(){
-const b=document.getElementById("luckyBirth").value;
-const n=document.getElementById("luckyName").value;
+const b=document.getElementById("luckyBirth").value; const n=document.getElementById("luckyName").value;
 if(!b)return alert("ป้อนวันเดือนปีเกิด");
 const bn=b.replaceAll("-","").split("").reduce((a,c)=>a+Number(c),0)%9+1;
-const d=new Date();const dn=(d.getDate()+d.getMonth()+1)%9+1;
-const nn=n?n.length%10:0;
-const r=document.getElementById("luckyResult");
-r.style.display="block";r.style.background="var(--success)";
+const d=new Date();const dn=(d.getDate()+d.getMonth()+1)%9+1; const nn=n?n.length%10:0;
+const r=document.getElementById("luckyResult");r.style.display="block";r.style.background="var(--success)";
 r.innerHTML=`<h1 style="letter-spacing:6px">${bn}${dn}${(bn+dn+nn)%10}</h1>`;
+}
+
+// --- 🐘 룰렛 로직 (추가 기능 포함) ---
+const canvas = document.getElementById('rouletteCanvas');
+const ctx = canvas.getContext('2d');
+const rInputs = document.getElementById('rouletteInputs');
+const rColors = ["rgba(255,255,255,0.75)", "rgba(242,240,235,0.75)", "rgba(220,220,220,0.75)", "rgba(235,230,220,0.75)"];
+let isSpinning = false;
+let currRot = 0;
+
+function handleRInput(el) {
+    const inputs = document.querySelectorAll('.item-input');
+    const last = inputs[inputs.length-1];
+    if(last.value.trim() !== "" && inputs.length < 10) {
+        const div = document.createElement('div'); div.className = 'r-input-item';
+        div.innerHTML = `<span>${inputs.length+1}</span><input type="text" class="item-input" placeholder="รายการที่ ${inputs.length+1}" oninput="handleRInput(this)">`;
+        rInputs.appendChild(div);
+    }
+    drawR();
+}
+
+function drawR() {
+    const items = Array.from(document.querySelectorAll('.item-input')).map(i=>i.value.trim()).filter(v=>v!=="");
+    ctx.clearRect(0,0,300,300);
+    if(items.length < 2) {
+        ctx.beginPath(); ctx.fillStyle="rgba(255,255,255,0.5)"; ctx.arc(150,150,150,0,2*Math.PI); ctx.fill();
+        return;
+    }
+    const arc = (2*Math.PI)/items.length;
+    items.forEach((text, i) => {
+        const angle = i*arc;
+        ctx.beginPath(); ctx.fillStyle=rColors[i%rColors.length]; ctx.moveTo(150,150); ctx.arc(150,150,150,angle,angle+arc); ctx.fill();
+        ctx.strokeStyle="rgba(0,0,0,0.05)"; ctx.stroke();
+        ctx.save(); ctx.translate(150,150); ctx.rotate(angle+arc/2); ctx.textAlign="right"; ctx.fillStyle="#333"; ctx.font="bold 15px Tahoma"; ctx.fillText(text, 140, 5); ctx.restore();
+    });
+}
+
+function spinR() {
+    const items = Array.from(document.querySelectorAll('.item-input')).map(i=>i.value.trim()).filter(v=>v!=="");
+    if(items.length < 2) return alert("กรุณากรอกอย่างน้อย 2 รายการ!");
+    if(isSpinning) return;
+    isSpinning = true;
+    const rot = Math.floor(Math.random()*360) + 3600; currRot += rot;
+    canvas.style.transform = `rotate(${currRot}deg)`;
+    setTimeout(() => {
+        isSpinning = false;
+        const actual = currRot % 360;
+        const arcDeg = 360 / items.length;
+        const idx = Math.floor(((360 - (actual % 360) + 270) % 360) / arcDeg);
+        
+        // 팝업 띄우기
+        document.getElementById('winnerName').innerText = items[idx % items.length] + "!";
+        document.getElementById('winnerPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }, 4000);
+}
+
+function closePopup() {
+    document.getElementById('winnerPopup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function resetR() {
+    if(!confirm("삭제하시겠습니까?")) return;
+    rInputs.innerHTML = `
+        <div class="r-input-item"><span>1</span><input type="text" class="item-input" placeholder="รายการที่ 1" oninput="handleRInput(this)"></div>
+        <div class="r-input-item"><span>2</span><input type="text" class="item-input" placeholder="รายการที่ 2" oninput="handleRInput(this)"></div>
+    `;
+    drawR();
 }
 </script>
 
 </body>
 </html>
-
-
