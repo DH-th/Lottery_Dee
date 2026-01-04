@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>โชคดีที่สุด - เล่นลอตเตอรี่</title>
+<meta name="description" content="ตรวจหวย, ลอตเตอรี่, ได้รับหมายเลขแนะนำ!">
 
 <link rel="icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -49,6 +50,15 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .acc-header{background:var(--accent);color:#fff;padding:14px;font-weight:600;cursor:pointer;text-align:center}
 .acc-body{display:none;background:#fafafa;padding:0 14px}
 .ad-container { margin: 25px 0; text-align: center; min-height: 100px; }
+
+/* 추가된 스타일: 결과 이미지 및 공유 버튼 */
+.result-img-container { text-align: center; margin-bottom: 20px; }
+.result-img { width: 100%; max-width: 400px; border-radius: 12px; display: block; margin: 0 auto 10px; }
+.share-group { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+.btn-share { flex: 1; min-width: 80px; padding: 10px 5px; font-size: 12px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; border: none; }
+.sh-ig { background: #E1306C; } /* Instagram */
+.sh-fb { background: #1877F2; } /* Facebook */
+.sh-ln { background: #06C755; } /* Line */
 
 /* 🐘 룰렛 전용 스타일 */
 .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto 30px; }
@@ -132,6 +142,16 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 <section id="lotto-now" class="page">
 <div class="card">
 <h3>🎯 ตรวจผลรางวัล</h3>
+
+<div class="result-img-container">
+    <img src="Result.png" alt="Check Result" class="result-img">
+    <div class="share-group">
+        <button class="btn-share sh-ig" onclick="shareSocial('instagram')">Instagram</button>
+        <button class="btn-share sh-fb" onclick="shareSocial('facebook')">Facebook</button>
+        <button class="btn-share sh-ln" onclick="shareSocial('line')">Line</button>
+    </div>
+</div>
+
 <div class="date" id="drawDate">กำลังโหลด...</div>
 <div class="input-box">
 <input id="myNum" maxlength="6" placeholder="กรอกเลข 6 หลัก" type="tel">
@@ -229,6 +249,29 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 </div>
 
 <script>
+// --- SNS 공유 기능 ---
+function shareSocial(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent("โชคดีที่สุด - ตรวจผลรางวัลสลากกินแบ่งรัฐบาล!");
+    let shareUrl = "";
+
+    switch(platform) {
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            break;
+        case 'line':
+            shareUrl = `https://social-plugins.line.me/lineit/share?url=${url}&text=${text}`;
+            break;
+        case 'instagram':
+            // 인스타그램은 직접 포스팅 API가 없어 앱 실행 또는 프로필 페이지 유도
+            alert("Instagram은 앱을 열어 직접 이미지(Result.png)를 업로드해 주세요!");
+            shareUrl = "instagram://camera"; 
+            break;
+    }
+    
+    if(shareUrl) window.open(shareUrl, '_blank');
+}
+
 // --- 공통 페이지 전환 ---
 function showPage(id){
 document.querySelectorAll('.page').forEach(p=>p.style.display='none');
