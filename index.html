@@ -53,9 +53,9 @@ body{margin:0;font-family:'Noto Sans KR','Noto Sans Thai',sans-serif;background:
 
 main{max-width:600px;margin:auto;padding:20px}
 .page{display:none}
-.card{background:var(--card);padding:24px;border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.card{background:var(--card);padding:24px;border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:20px;}
 h1,h2,h3{color:var(--primary);margin-top:0}
-h1{font-size: 1.5rem;} /* ปรับขนาด H1 ให้เหมาะสม */
+h1{font-size: 1.5rem;}
 .date{text-align:center;color:#777;margin-bottom:15px}
 .input-box{display:flex;gap:10px;margin-bottom:15px}
 input{flex:1;padding:12px;font-size:16px;border-radius:10px;border:1px solid #ddd}
@@ -70,9 +70,8 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .accordion{margin-top:15px;border:1px solid #ddd;border-radius:12px;overflow:hidden}
 .acc-header{background:var(--accent);color:#fff;padding:14px;font-weight:600;cursor:pointer;text-align:center}
 .acc-body{display:none;background:#fafafa;padding:0 14px}
-.ad-container { margin: 25px 0; text-align: center; min-height: 100px; overflow: hidden; }
+.ad-container { margin: 25px 0; text-align: center; min-height: 250px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 12px;}
 
-/* ผลลัพธ์และปุ่มแชร์ */
 .result-img-container { text-align: center; margin-bottom: 20px; }
 .result-img { width: 100%; max-width: 400px; border-radius: 12px; display: block; margin: 0 auto 10px; }
 .share-group { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
@@ -81,7 +80,6 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .sh-fb { background: #1877F2; }
 .sh-ln { background: #06C755; }
 
-/* 🐘 룰렛 */
 .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto 30px; }
 .elephant-bg {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -98,7 +96,6 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .btn-spin { width: 100%; padding: 16px; background: var(--thai-red); color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
 .reset-link { font-size: 12px; color: #999; text-decoration: underline; cursor: pointer; display: block; margin-top: 10px; text-align: right; }
 
-/* 🪜 사다리 타기 */
 .ladder-board { position: relative; margin: 25px 0; }
 .header-nodes, .footer-nodes { display: flex; justify-content: space-around; }
 .node-btn { width: 44px; height: 44px; border-radius: 14px; border: none; background: var(--thai-red); color: gold; font-weight: 700; cursor: pointer; transition: 0.3s; z-index: 60; position: relative; }
@@ -116,7 +113,6 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 .btn-main { flex: 1; padding: 16px; border: none; border-radius: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; }
 .btn-gold { background: var(--thai-gold); color: white; }
 
-/* 당첨 팝업 */
 .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
 #winnerPopup {
     display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -127,9 +123,9 @@ button{padding:12px;border:none;border-radius:10px;background:var(--secondary);c
 @keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 #winnerPopup h1 { font-size: 2.2rem; margin: 15px 0; color: var(--thai-red); }
 
-/* Footer SEO Text */
 footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-size: 12px; }
-.seo-text { text-align: left; font-size: 13px; line-height: 1.6; color: #666; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+.seo-text { text-align: left; font-size: 13px; line-height: 1.6; color: #666; margin-top: 20px; border-top: 2px solid var(--primary); padding-top: 20px; }
+.seo-text h4 { color: var(--thai-red); margin-bottom: 10px; }
 </style>
 </head>
 
@@ -147,8 +143,7 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
                 </div>
             </div>
             <span onclick="showPage('recommend')">เลขแนะนำ</span>
-            <span onclick="showPage('fortune')">ดวงของวันนี้</span>
-            <span onclick="showPage('lucky')">เลขนำโชค</span>
+            <span onclick="showPage('fortune')">ดวงวันนี้</span>
             <span onclick="showPage('roulette')" style="color:var(--thai-red)">🐘 วงล้อ</span>
             <span onclick="showPage('ladder')" style="color:var(--thai-gold)">🪜 บันได</span>
         </div>
@@ -156,17 +151,31 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
 </header>
 
 <main>
-    <section id="home" class="page">
+    <section id="home" class="page" style="display: block;">
         <article class="card" style="text-align:center">
-            <h1>โชคดีที่สุด 🇹🇭</h1>
-            <p>บริการตรวจผลสลากกินแบ่งรัฐบาลไทย รวดเร็ว แม่นยำ เช็คเลขเด็ดนำโชคได้ทุกวัน</p>
-            <button onclick="showPage('lotto-now')">ตรวจผลรางวัลล่าสุด</button>
+            <h1>โชคดีที่สุด 🇹🇭 ตรวจหวยรัฐบาลไทยล่าสุด</h1>
+            <p>ยินดีต้อนรับสู่บริการ ตรวจผลสลากกินแบ่งรัฐบาลไทย อัปเดตล่าสุดทุกงวด รวดเร็ว แม่นยำ พร้อมวิเคราะห์เลขเด็ดและเกมเสี่ยงโชคฟรี</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button onclick="showPage('lotto-now')">ตรวจหวยงวดนี้</button>
+                <button onclick="showPage('recommend')" style="background: var(--accent);">ดูเลขเด็ด</button>
+            </div>
+        </article>
+        
+        <article class="card">
+            <h3>บริการของเรา</h3>
+            <ul style="text-align: left; line-height: 1.8; color: #444;">
+                <li><strong>ตรวจผลรางวัล:</strong> เช็คผลสลากกินแบ่งรัฐบาลไทยได้ทันที</li>
+                <li><strong>เลขเด็ดแนะนำ:</strong> สุ่มเลขมงคลเพื่อเป็นแนวทางในแต่ละงวด</li>
+                <li><strong>วงล้อช้างนำโชค:</strong> เกมวงล้อสุ่มรายการที่สนุกและใช้งานง่าย</li>
+                <li><strong>บันไดเศรษฐี:</strong> เกมบันไดสุ่มผู้โชคดีในรูปแบบไทยๆ</li>
+            </ul>
         </article>
     </section>
 
     <section id="lotto-now" class="page">
         <div class="card">
             <h3>🎯 ตรวจผลรางวัลสลากกินแบ่ง</h3>
+            <p>ตรวจสอบหมายเลขรางวัลสลากกินแบ่งรัฐบาลไทยงวดล่าสุด</p>
             <div class="result-img-container">
                 <img src="Result.png" alt="ผลสลากกินแบ่งรัฐบาล" class="result-img">
                 <div class="share-group">
@@ -175,19 +184,22 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
                     <button class="btn-share sh-ln" onclick="shareSocial('line')">Line</button>
                 </div>
             </div>
-            <div class="date" id="drawDate">กำลังโหลดข้อมูลรางวัล...</div>
+            <div class="date" id="drawDate">กำลังโหลดข้อมูลรางวัลล่าสุด...</div>
             <div class="input-box">
                 <input id="myNum" maxlength="6" placeholder="กรอกเลข 6 หลัก" type="tel" aria-label="กรอกเลขสลาก">
                 <button onclick="checkWin()">ตรวจสอบ</button>
             </div>
             <div id="winResult" class="result"></div>
-            <div id="lottoList"></div>
+            <div id="lottoList">
+                <p style="text-align:center; color:#999;">กรุณารอสักครู่ ระบบกำลังดึงข้อมูล...</p>
+            </div>
         </div>
     </section>
 
     <section id="recommend" class="page">
         <div class="card" style="text-align:center">
             <h3>🎲 เลขเด็ดแนะนำงวดนี้</h3>
+            <p>สุ่มเลขมงคลเพื่อเพิ่มโอกาสในการโชคดีของคุณ</p>
             <div id="recNum" style="letter-spacing:6px; font-size: 3rem; font-weight: bold; color: var(--thai-red);">------</div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px">
                 <button onclick="recommendN(1)">1 ตัว</button>
@@ -203,25 +215,16 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
     <section id="fortune" class="page">
         <div class="card" style="text-align:center">
             <h3>🔮 ทำนายดวงประจำวันนี้</h3>
-            <div id="fortuneText" style="font-size:18px;margin:20px; font-weight: 500;"></div>
+            <p>วิเคราะห์ดวงชะตาและโชคลาภของคุณวันนี้</p>
+            <div id="fortuneText" style="font-size:18px;margin:20px; font-weight: 500;">คลิกปุ่มเพื่อดูคำทำนายของคุณ</div>
             <button onclick="refreshFortune()">ดูคำทำนายใหม่</button>
-        </div>
-    </section>
-
-    <section id="lucky" class="page">
-        <div class="card" style="text-align:center">
-            <h3>🍀 คำนวณเลขนำโชคเฉพาะคุณ</h3>
-            <div class="input-box"><input type="date" id="luckyBirth" aria-label="วันเกิด"></div>
-            <div class="input-box"><input type="text" id="luckyName" placeholder="ชื่อหรือชื่อเล่น"></div>
-            <button onclick="makeLuckyNumber()">รับเลขนำโชค</button>
-            <div id="luckyResult" class="result"></div>
         </div>
     </section>
 
     <section id="roulette" class="page">
         <div class="card" style="text-align:center">
             <h3>🐘 วงล้อช้างนำโชค</h3>
-            <p style="font-size:13px; color:#888;">ใส่ชื่อรายการที่ต้องการสุ่มเพื่อเสี่ยงทาย</p>
+            <p>ใส่ชื่อรายการที่ต้องการสุ่มเพื่อเสี่ยงทายและหาผู้โชคดี</p>
             <div class="roulette-wrapper">
                 <div class="pointer"></div>
                 <div class="elephant-bg"></div>
@@ -239,7 +242,7 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
     <section id="ladder" class="page">
         <div class="card" style="text-align:center">
             <h3 style="color:var(--thai-red);">🪜 บันไดเศรษฐีช้างนำโชค</h3>
-            <div style="color:var(--thai-gold); font-size:11px; font-weight:700; letter-spacing: 2px; margin-bottom: 15px;">PATH TRACKING MODE</div>
+            <p>เกมสุ่มทางเลือกตามเส้นทางบันไดเศรษฐี</p>
             <div class="ladder-board">
                 <div id="headerBox" class="header-nodes"></div>
                 <div class="canvas-container">
@@ -268,13 +271,15 @@ footer { margin-top: 40px; padding: 20px; text-align: center; color: #888; font-
     </div>
 
     <article class="seo-text">
-        <h4>เกี่ยวกับ โชคดีที่สุด - ตรวจหวยรัฐบาลไทย</h4>
-        <p>ยินดีต้อนรับสู่ "โชคดีที่สุด" แพลตฟอร์มออนไลน์ที่ช่วยให้คุณตรวจสอบผลสลากกินแบ่งรัฐบาลไทยได้อย่างรวดเร็วและแม่นยำ เราอัปเดตผลรางวัลทันทีที่ประกาศผล พร้อมระบบตรวจหวยย้อนหลังที่ใช้งานง่าย นอกจากนี้เรายังมีเครื่องมือสุ่มเลขเด็ดนำโชค อาทิ วงล้อช้าง และ บันไดนำโชค เพื่อความสนุกสนานในการเสี่ยงโชคของคุณในทุกๆ งวด</p>
+        <h4>เกี่ยวกับ โชคดีที่สุด - แพลตฟอร์มตรวจหวยออนไลน์</h4>
+        <p>ยินดีต้อนรับสู่ <strong>"โชคดีที่สุด" (Chokdee Tisut)</strong> แหล่งรวมข้อมูลสถิติและผลการออกสลากกินแบ่งรัฐบาลไทยที่แม่นยำที่สุด เรามีเป้าหมายในการให้บริการข้อมูลแก่ผู้ที่ชื่นชอบการเสี่ยงโชคด้วยระบบที่ทันสมัย</p>
+        <p>ภายในเว็บไซต์ คุณสามารถใช้งานระบบ <strong>ตรวจหวยล่าสุด</strong> เพียงกรอกตัวเลข 6 หลักเพื่อเช็คผลรางวัลได้ทันที นอกจากนี้เรายังมี <strong>เลขเด็ดแนะนำ</strong> ที่วิเคราะห์จากสถิติ และเครื่องมือสุ่มเลขอย่าง <em>วงล้อนำโชค</em> และ <em>บันไดเศรษฐี</em> เพื่อเพิ่มความสนุกสนานในการเลือกเลขนำโชคของคุณ</p>
+        <p>เว็บไซต์ของเราออกแบบมาให้รองรับการใช้งานบนมือถือ (Mobile Friendly) และอัปเดตข้อมูลแบบเรียลไทม์เพื่อให้คุณไม่พลาดทุกข่าวสารสำคัญเกี่ยวกับลอตเตอรี่ไทย</p>
     </article>
 </main>
 
 <footer>
-    <p>&copy; 2026 โชคดีที่สุด (Chokdee Tisut) - All Rights Reserved</p>
+    <p>&copy; 2026 โชคดีที่สุด (Chokdee Tisut) - ตรวจหวยรัฐบาลไทยออนไลน์ | All Rights Reserved</p>
 </footer>
 
 <div class="overlay" id="overlay" onclick="closePopup()"></div>
@@ -306,16 +311,29 @@ function showPage(id){
     if(id==='fortune')refreshFortune();
     if(id==='roulette')drawR();
     if(id==='ladder') initLadder();
+    window.scrollTo(0,0);
 }
-showPage('home');
 
 // --- 로또/운세 로직 ---
 const PRIZE_MONEY={"รางวัลที่ 1":6000000,"รางวัลข้างเคียงรางวัลที่ 1":100000,"รางวัลที่ 2":200000,"รางวัลที่ 3":80000,"รางวัลที่ 4":40000,"รางวัลที่ 5":20000,"รางวัลเลขหน้า 3 ตัว":4000,"รางวัลเลขท้าย 3 ตัว":4000,"รางวัลเลขท้าย 2 ตัว":2000};
 let lottoData=null;
-fetch("https://lotto.api.rayriffy.com/latest").then(r=>r.json()).then(j=>{lottoData=j.response;renderLotto(lottoData);});
+
+function fetchLotto() {
+    fetch("https://lotto.api.rayriffy.com/latest")
+    .then(r=>r.json())
+    .then(j=>{
+        lottoData=j.response;
+        renderLotto(lottoData);
+    })
+    .catch(err => {
+        document.getElementById("lottoList").innerHTML = "<p>ไม่สามารถดึงข้อมูลได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง</p>";
+    });
+}
+fetchLotto();
 
 function renderLotto(data){
-    document.getElementById("drawDate").innerText=`วันจับสลาก : ${data.date}`;
+    const drawDateEl = document.getElementById("drawDate");
+    if(drawDateEl) drawDateEl.innerText=`วันจับสลาก : ${data.date}`;
     const box=document.getElementById("lottoList");box.innerHTML="";
     const acc=document.createElement("div");acc.className="accordion";
     const h=document.createElement("div");h.className="acc-header";h.innerText="📂 เปิดหมายเลขรางวัลที่ 3-5";
@@ -329,6 +347,7 @@ function renderLotto(data){
 
 function checkWin(){
     const n=document.getElementById("myNum").value; const box=document.getElementById("winResult");
+    if(!lottoData) return alert("ข้อมูลรางวัลยังไม่โหลด กรุณารอสักครู่");
     if(n.length!==6)return alert("กรุณากรอกหมายเลข 6 หลักให้ถูกต้อง.");
     let w=[],t=0;
     lottoData.prizes.forEach(p=>{if(p.number.includes(n)){w.push(p.name);t+=PRIZE_MONEY[p.name]||0}});
@@ -344,14 +363,6 @@ function checkWin(){
 function recommendN(len){document.getElementById("recNum").innerText=Math.floor(Math.random()*10**len).toString().padStart(len,'0');}
 const fortunes=["วันนี้เป็นวันแห่งโชคลาภของคุณ 🍀","จะได้รับโอกาสที่คาดไม่ถึง ✨","ระวังเรื่องการใช้จ่ายเงิน 💰","วันนี้เหมาะแก่การเสี่ยงโชคที่สุด 🎟️","ใช้สมาธิแล้วจะเกิดโชคดี 🧘"];
 function refreshFortune(){document.getElementById("fortuneText").innerText=fortunes[Math.floor(Math.random()*fortunes.length)];}
-function makeLuckyNumber(){
-    const b=document.getElementById("luckyBirth").value; const n=document.getElementById("luckyName").value;
-    if(!b)return alert("ป้อนวันเดือนปีเกิด");
-    const bn=b.replaceAll("-","").split("").reduce((a,c)=>a+Number(c),0)%9+1;
-    const d=new Date();const dn=(d.getDate()+d.getMonth()+1)%9+1; const nn=n?n.length%10:0;
-    const r=document.getElementById("luckyResult");r.style.display="block";r.style.background="var(--success)";
-    r.innerHTML=`<h1 style="letter-spacing:6px">${bn}${dn}${(bn+dn+nn)%10}</h1>`;
-}
 
 // --- 🐘 룰렛 로직 ---
 const canvasR = document.getElementById('rouletteCanvas');
@@ -407,8 +418,11 @@ const sprite = document.getElementById('elephantSprite'); const blind = document
 
 function initLadder() {
     ladderMoving = false; historyPath = []; sprite.style.display = 'none'; blind.classList.remove('hidden');
-    const container = document.querySelector('.canvas-container'); ladderCanvas.width = container.clientWidth; ladderCanvas.height = container.clientHeight;
-    const hBox = document.getElementById('headerBox'); const fBox = document.getElementById('footerBox'); hBox.innerHTML = ''; fBox.innerHTML = '';
+    const container = document.querySelector('.canvas-container'); 
+    if(!container) return;
+    ladderCanvas.width = container.clientWidth; ladderCanvas.height = container.clientHeight;
+    const hBox = document.getElementById('headerBox'); const fBox = document.getElementById('footerBox'); 
+    hBox.innerHTML = ''; fBox.innerHTML = '';
     for(let i=0; i<ladderCount; i++) {
         const btn = document.createElement('button'); btn.className = 'node-btn'; btn.innerText = String.fromCharCode(65 + i); btn.onclick = () => runLadder(i); hBox.appendChild(btn);
         const input = document.createElement('input'); input.className = 'result-input'; input.value = (i === 0) ? "WIN" : "X"; fBox.appendChild(input);
