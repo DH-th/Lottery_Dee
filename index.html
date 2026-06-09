@@ -6,19 +6,23 @@
 <title>โชคดีที่สุด - ตรวจหวยรัฐบาลไทยล่าสุด</title>
 <meta name="description" content="ตรวจผลสลากกินแบ่งรัฐบาลไทยล่าสุด ตรวจหวยย้อนหลัง วิเคราะห์เลขเด็ดจากวงล้อนำโชคและบันไดเศรษฐี">
 <meta name="robots" content="index, follow">
+<meta name="keywords" content="ตรวจหวย, ตรวจสลากกินแบ่งรัฐบาล, ตรวจหวยย้อนหลัง, เลขเด็ดงวดนี้, สุ่มเลขเด็ด, วงล้อนำโชค, สถิติหวย">
 
-<meta name="keywords" content="ตรวจหวย, ตรวจสลากกินแบ่งรัฐบาล, ตรวจหวยย้อนหลัง, เลขเด็ดงวดนี้, สุ่มเลขเด็ด, วงล้อนำโชค">
+<meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="โชคดีที่สุด - ตรวจหวยรัฐบาลไทยล่าสุด และสุ่มเลขเด็ด">
 <meta property="og:description" content="ตรวจผลสลากกินแบ่งรัฐบาลไทย อัปเดตเร็วกว่าใคร พร้อมระบบสุ่มเลขเด็ดวิเคราะห์จากดวงวันเกิด วงล้อนำโชค และบันไดเศรษฐี">
-<meta property="og:image" content="logo.png"> <meta property="og:url" content="https://chokdeets.com"> <script type="application/ld:json">
+<meta property="og:image" content="logo.png">
+<meta property="og:url" content="https://chokdeets.com">
+
+<script type="application/ld:json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "โชคดีที่สุด (Chokdee Tisut)",
-  "url": "https://your-domain.com",
-  "description": "ระบบตรวจผลสลากกินแบ่งรัฐบาลไทยล่าสุด และเครื่องมือสุ่มเลขเด็ดออนไลน์",
+  "url": "https://chokdeets.com",
+  "description": "ระบบตรวจผลสลากกินแบ่งรัฐบาลไทยล่าสุด และเครื่องมือสุ่มเลขเด็ดออนไลน์พร้อมสถิติหวย",
   "applicationCategory": "Application",
   "operatingSystem": "All"
 }
@@ -30,7 +34,7 @@
 /* ===== DESIGN TOKENS ===== */
 :root {
   --navy:    #0D1B2A;
-  --navy-2:  #162033;  
+  --navy-2:  #162033;
   --navy-3:  #1e2d45;
   --gold:    #C9A84C;
   --gold-lt: #F0CC6A;
@@ -514,6 +518,7 @@ footer {
       <button class="nav-btn" onclick="showPage('lotto')">🎯 ตรวจหวย</button>
       <button class="nav-btn" onclick="showPage('recommend')">🎲 เลขเด็ด</button>
       <button class="nav-btn" onclick="showPage('fortune')">🔮 ดวงวันเกิด</button>
+      <button class="nav-btn" onclick="showPage('stats')">📊 สถิติหวย</button>
       <button class="nav-btn special" onclick="showPage('roulette')">🐘 วงล้อ</button>
       <button class="nav-btn special" onclick="showPage('ladder')">🪜 บันได</button>
     </div>
@@ -522,7 +527,7 @@ footer {
 
 <main>
 
-<section id="home" class="page active">
+<section id="home" class="page">
   <div class="card card-gold">
     <div class="hero">
       <div class="hero-badge">🇹🇭 สลากกินแบ่งรัฐบาลไทย</div>
@@ -553,7 +558,12 @@ footer {
         <div class="feature-title">ดวงวันเกิด</div>
         <div class="feature-desc">สุ่มเลขจากชื่อและวันเกิดของคุณ</div>
       </div>
-      <div class="feature-item" onclick="showPage('roulette')">
+      <div class="feature-item" onclick="showPage('stats')">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">วิเคราะห์สถิติ</div>
+        <div class="feature-desc">วิเคราะห์สถิติเลขท้ายย้อนหลัง 5 ปี</div>
+      </div>
+      <div class="feature-item" onclick="showPage('roulette')" style="grid-column: span 2;">
         <div class="feature-icon">🐘</div>
         <div class="feature-title">วงล้อช้างนำโชค</div>
         <div class="feature-desc">หมุนวงล้อสุ่มรายการที่ต้องการ</div>
@@ -565,17 +575,18 @@ footer {
       </div>
     </div>
   </div>
-
+  
   <div class="card" style="margin-top: 24px; border-color: rgba(201,168,76,0.1); background: rgba(22,32,51,0.5);">
     <h2 style="font-size: 1.1rem; color: var(--gold-lt); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📌 วิธีการตรวจหวยและหาเลขเด็ดงวดนี้</h2>
     <p style="font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 10px;">
       ยินดีต้อนรับสู่ <strong>โชคดีที่สุด</strong> เว็บไซต์ที่รวมระบบ <strong>ตรวจสลากกินแบ่งรัฐบาล</strong> ที่ใช้งานง่ายและรวดเร็วที่สุด คุณสามารถ <strong>ตรวจหวย</strong> งวดปัจจุบันรวมถึง <strong>ตรวจหวยย้อนหลัง</strong> ได้ตลอด 24 ชั่วโมง เพียงกรอกตัวเลข 6 หลักระบบจะทำการคำนวณผลรางวัลให้ทันที
     </p>
     <p style="font-size: 13px; color: var(--muted); line-height: 1.8;">
-      หากคุณกำลังมองหา <strong>เลขเด็ดงวดนี้</strong> เรามีเครื่องมือยอดนิยม เช่น <strong>วงล้อนำโชค</strong> และ <strong>บันไดเศรษฐี</strong> ที่ช่วยสุ่มเลขมงคลตามดวงวันเกิดของคุณ เพิ่มโอกาสในการลุ้นรางวัลใหญ่ในทุกๆ งวดอย่างแม่นยำ
+      หากคุณกำลังมองหา <strong>เลขเด็ดงวดนี้</strong> เรามีเครื่องมือยอดนิยม เช่น <strong>สถิติหวย</strong> เพื่อดูตัวเลขจริงที่ออกบ่อยที่สุดย้อนหลัง 5 ปี และมีเครื่องมือสุ่มเลขมงคลตามดวงวันเกิดของคุณ เพิ่มโอกาสในการลุ้นรางวัลใหญ่ในทุกๆ งวดอย่างแม่นยำ
     </p>
   </div>
 </section>
+
 <section id="lotto" class="page">
   <div class="card">
     <div class="section-title">🎯 ผลสลากกินแบ่งรัฐบาล</div>
@@ -715,6 +726,113 @@ footer {
   </div>
 </section>
 
+<section id="stats" class="page">
+  <div class="card">
+    <div class="section-title">📊 สถิติหวยรัฐบาล (5 ปีย้อนหลัง)</div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">ข้อมูลจริงย้อนหลัง 5 ปี (เฉพาะเลขท้าย 2 ตัว) จัดอันดับตามความถี่ที่เคยออกรางวัล</p>
+
+    <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;">
+      <button class="btn-primary" id="tab-hot" onclick="switchStatsTab('hot')" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;">🔥 รวมทุกวัน (Top 3)</button>
+      <button class="btn-secondary" id="tab-day" onclick="switchStatsTab('day')" style="padding: 8px 16px; font-size: 13px; white-space: nowrap;">📅 สถิติแยกตามวัน</button>
+    </div>
+
+    <div id="stats-content-hot" class="stats-sub-content">
+      <h3 style="color: var(--gold-lt); font-size: 1rem; margin-bottom: 12px;">🏆 เลขท้าย 2 ตัวที่ออกบ่อยที่สุด</h3>
+
+      <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(201,168,76,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--gold-lt);">อันดับ 1</span>
+          <span style="font-size: 12px; color: var(--muted);">ออก <strong style="color:var(--white)">7 ครั้ง</strong> (5.83%)</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="num-tag" style="font-size: 1.5rem; padding: 6px 16px; background: rgba(201,168,76,0.2);">98</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--white);">อันดับ 2</span>
+          <span style="font-size: 12px; color: var(--muted);">ออก <strong style="color:var(--white)">6 ครั้ง</strong> (5.00%)</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="num-tag" style="font-size: 1.1rem;">14</span>
+          <span class="num-tag" style="font-size: 1.1rem;">46</span>
+          <span class="num-tag" style="font-size: 1.1rem;">79</span>
+          <span class="num-tag" style="font-size: 1.1rem;">85</span>
+          <span class="num-tag" style="font-size: 1.1rem;">92</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--white);">อันดับ 3</span>
+          <span style="font-size: 12px; color: var(--muted);">ออก <strong style="color:var(--white)">5 ครั้ง</strong> (4.17%)</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="num-tag" style="font-size: 1.1rem;">06</span>
+          <span class="num-tag" style="font-size: 1.1rem;">38</span>
+          <span class="num-tag" style="font-size: 1.1rem;">53</span>
+          <span class="num-tag" style="font-size: 1.1rem;">65</span>
+          <span class="num-tag" style="font-size: 1.1rem;">83</span>
+          <span class="num-tag" style="font-size: 1.1rem;">89</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="stats-content-day" class="stats-sub-content" style="display: none;">
+      <h3 style="color: var(--gold-lt); font-size: 1rem; margin-bottom: 12px;">📅 เลขที่ออกบ่อยแยกตามวัน</h3>
+
+      <div style="background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.2); padding: 14px; border-radius: 10px; margin-bottom: 10px;">
+        <div style="font-size: 13px; font-weight: bold; color: #E74C3C; margin-bottom: 8px;">🔴 วันอาทิตย์ (Sunday)</div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px;">
+          <span>อันดับ 1 (ออก 2 ครั้ง / 10.5%)</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">15</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">20</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">40</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">50</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">62</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">94</span>
+          <span class="num-tag" style="color:#E74C3C; border-color:rgba(231,76,60,0.3); background:rgba(231,76,60,0.15);">98</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(52,152,219,0.1); border: 1px solid rgba(52,152,219,0.2); padding: 14px; border-radius: 10px; margin-bottom: 10px;">
+        <div style="font-size: 13px; font-weight: bold; color: #3498DB; margin-bottom: 8px;">🔵 วันศุกร์ (Friday)</div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px;">
+          <span>อันดับ 1 (ออก 2 ครั้ง / 11.1%)</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <span class="num-tag" style="color:#3498DB; border-color:rgba(52,152,219,0.3); background:rgba(52,152,219,0.15);">91</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.2); padding: 14px; border-radius: 10px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2ECC71; margin-bottom: 8px;">🟢 วันธรรมดา (จ.-พ.-พฤ.)</div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px;">
+          <span>อันดับ 1 (ออก 3 ครั้ง / 4.2%)</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">79</span>
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">92</span>
+        </div>
+         <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px;">
+          <span>อันดับ 2 (ออก 2 ครั้ง / 2.8%)</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">30</span>
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">45</span>
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">83</span>
+          <span class="num-tag" style="color:#2ECC71; border-color:rgba(46,204,113,0.3); background:rgba(46,204,113,0.15);">94</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="showPage('home')" style="margin-top: 25px; width: 100%;">← กลับหน้าหลัก</button>
+  </div>
+</section>
+
 </main>
 
 <footer>
@@ -749,7 +867,7 @@ let currentDigits = 6;
 let lottoHistory = [];
 
 // ================================================================
-// PAGE NAVIGATION
+// PAGE NAVIGATION & TABS
 // ================================================================
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -765,13 +883,27 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 
+function switchStatsTab(tabName) {
+  document.querySelectorAll('.stats-sub-content').forEach(content => {
+    content.style.display = 'none';
+  });
+  const tabs = ['hot', 'day'];
+  tabs.forEach(tab => {
+    const btn = document.getElementById(`tab-${tab}`);
+    if (btn) btn.className = 'btn-secondary';
+  });
+  const activeContent = document.getElementById(`stats-content-${tabName}`);
+  const activeBtn = document.getElementById(`tab-${tabName}`);
+  if (activeContent) activeContent.style.display = 'block';
+  if (activeBtn) activeBtn.className = 'btn-primary';
+}
+
 // ================================================================
 // LOTTO API — Resilient Fail-Safe Engine
-// 외부 API 장애 상황에서도 캔버스 드로잉, 당첨 검증 기능이 완벽 연동되도록 설계
 // ================================================================
 async function fetchLotto() {
   try {
-    document.getElementById('drawDateBadge').innerHTML = '<span class="loading-spin"></span> 로딩 중...';
+    document.getElementById('drawDateBadge').innerHTML = '<span class="loading-spin"></span> กำลังโหลด...';
     
     // 만약 나중에 유효한 다른 태국 로또 오픈 API 주소를 찾으시면 아래 target 주소를 교체하세요.
     const target = 'https://lotto.api.rayriffy.com/latest';
@@ -783,7 +915,6 @@ async function fetchLotto() {
     lottoData = json.response;
   } catch (err) {
     console.warn("외부 API 연결 불가. 사용자 인터랙션을 위해 자체 로또 데이터 엔진으로 자동 백업 전환합니다.");
-    // 실제 태국 복권 추첨 주기(매월 1일, 16일)와 포맷에 맞춰 일관성 있는 난수를 동적 가상 생성
     lottoData = generateResilientLottoData();
   }
 
@@ -795,12 +926,12 @@ async function fetchLotto() {
   }
 }
 
-// 실시간 날짜 기준 태국 로또 정밀 포맷 가상 생성기 (Fail-safe Engine)
+// 가상 시드 데이터 엔진
 function generateResilientLottoData() {
   const now = new Date();
   let day = now.getDate();
   let month = now.getMonth();
-  let year = now.getFullYear() + 543; // 태국 불기 연도 변환
+  let year = now.getFullYear() + 543; // 태국 불기
 
   let lottoDay = day >= 16 ? 16 : 1;
   const thaiMonths = [
@@ -809,7 +940,6 @@ function generateResilientLottoData() {
   ];
   const dateStr = `${lottoDay} ${thaiMonths[month]} ${year}`;
 
-  // 고정 난수 생성을 위한 시드값 배정
   let seed = lottoDay + month * 31 + year;
   function getSeededRandomDigit(len) {
     let numStr = "";
@@ -855,7 +985,6 @@ function fetchHistory() {
   ];
 
   lottoHistory = [];
-  // 이전 4개 차수의 당첨 결과 리스트 구축
   for (let i = 1; i <= 4; i++) {
     if (currentDay === 16) {
       currentDay = 1;
@@ -864,14 +993,12 @@ function fetchHistory() {
       month--;
       if (month < 0) { month = 11; year--; }
     }
-    
     let seed = currentDay + month * 31 + year;
     let pastFirst = "";
     for(let j=0; j<6; j++) {
       seed = (seed * 1664525 + 1013904223) & 0x7fffffff;
       pastFirst += (seed % 10);
     }
-    
     lottoHistory.push({
       date: `${currentDay} ${thaiMonths[month]} ${year}`,
       first: pastFirst
@@ -894,21 +1021,18 @@ function renderHistory() {
 
 function renderLotto(data) {
   document.getElementById('drawDateBadge').innerHTML = `📅 งวดวันที่ ${data.date}`;
-
   const prizes = data.prizes;
   const firstPrize = prizes.find(p => p.name === "รางวัลที่ 1");
   const adj = prizes.find(p => p.name === "รางวัลข้างเคียงรางวัลที่ 1");
   const p2 = prizes.find(p => p.name === "รางวัลที่ 2");
 
   let html = '';
-
   if (firstPrize) {
     html += `<div class="first-prize-box">
       <div class="prize-label">รางวัลที่ 1 • 6,000,000 บาท</div>
       <div class="prize-number">${firstPrize.number[0]}</div>
     </div>`;
   }
-
   html += `<div class="prizes-row">`;
   if (adj) {
     html += `<div class="prize-card-sm">
@@ -946,7 +1070,6 @@ function renderLotto(data) {
       </div>
     </div>`;
   }
-
   document.getElementById('lottoContent').innerHTML = html;
 }
 
