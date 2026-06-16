@@ -786,46 +786,83 @@ function showPage(id) {
 //           GET /lotto/:id → same as /latest response
 // ================================================================
 async function apiFetch(path) {
-  // Cache-busting: append a unique timestamp so neither the browser,
-  // nor any CDN/proxy in between, ever serves a stale cached response.
+  // Cache-busting: append a unique timestamp so neither the browser
+  // nor any CDN/proxy in between ever serves a stale cached response.
   const bust   = '_=' + Date.now();
   const sep    = path.includes('?') ? '&' : '?';
   const direct = 'https://lotto.api.rayriffy.com' + path + sep + bust;
-  const proxy  = 'https://corsproxy.io/?' + encodeURIComponent(direct);
 
-  const fetchOpts = { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } };
+  // fetchOpts intentionally avoids custom headers — adding headers like
+  // Cache-Control forces a CORS preflight (OPTIONS) request, which some
+  // proxy/CDN layers in front of the API mishandle and reject outright.
+  const fetchOpts = { cache: 'no-store' };
 
-  // 1) Direct request
-  try {
-    const r = await fetch(direct, fetchOpts);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    if (j.status !== 'success') throw new Error('API: ' + j.status);
-    return j.response;
-  } catch (e1) {
-    // 2) CORS proxy fallback (only used if direct request is blocked, e.g. CORS)
+  // Try a chain of request strategies in order: direct call first,
+  // then a series of public CORS proxies as fallback if the browser
+  // blocks the direct request (e.g. missing/blocked CORS headers).
+  const attempts = [
+    { label: 'direct', url: direct },
+    { label: 'corsproxy.io', url: 'https://corsproxy.io/?url=' + encodeURIComponent(direct) },
+    { label: 'allorigins', url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(direct) },
+    { label: 'codetabs', url: 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(direct) },
+  ];
+
+  const errors = [];
+  for (const attempt of attempts) {
     try {
-      const r2 = await fetch(proxy, fetchOpts);
-      if (!r2.ok) throw new Error('proxy HTTP ' + r2.status);
-      const j2 = await r2.json();
-      if (j2.status !== 'success') throw new Error('proxy API: ' + j2.status);
-      return j2.response;
-    } catch (e2) {
-      throw new Error('direct=' + e1.message + ' proxy=' + e2.message);
+      const r = await fetch(attempt.url, fetchOpts);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      if (j.status !== 'success') throw new Error('API status: ' + j.status);
+      return j.response;
+    } catch (e) {
+      errors.push(attempt.label + ': ' + e.message);
     }
   }
+  throw new Error(errors.join(' | '));
+}
+
+// Checks whether a draw's prize numbers are actually published yet.
+// The upstream source sometimes returns a page for the latest date
+// with empty number arrays (or "x"-masked placeholders) before the
+// official results are posted — this is not a connection problem,
+// it just means today's draw isn't live yet.
+function isDrawComplete(data) {
+  if (!data || !Array.isArray(data.prizes)) return false;
+  const first = data.prizes.find(p => p.name === 'รางวัลที่ 1');
+  if (!first || !Array.isArray(first.number) || first.number.length === 0) return false;
+  const num = first.number[0] || '';
+  if (!num || /x/i.test(num)) return false;
+  return true;
 }
 
 async function fetchLotto() {
   try {
-    const data = await apiFetch('/latest');
+    let data = await apiFetch('/latest');
+    let pending = false;
+
+    if (!isDrawComplete(data)) {
+      // Today's draw isn't published yet — fall back to the most
+      // recent complete draw so the page still shows real numbers,
+      // and flag it so the user knows today's result is pending.
+      pending = true;
+      try {
+        const list = await apiFetch('/list/1');
+        if (Array.isArray(list) && list.length > 1) {
+          const prevId = list[1].id;
+          const prevData = await apiFetch('/lotto/' + prevId);
+          if (isDrawComplete(prevData)) data = prevData;
+        }
+      } catch (e) { /* keep original (incomplete) data as last resort */ }
+    }
+
     const isNewDraw = lottoData && lottoData.date !== data.date;
     lottoData = data;
-    renderLotto(lottoData);
+    renderLotto(lottoData, pending);
     buildShareImage(lottoData);
     document.getElementById('shareSection').style.display = 'block';
     fetchHistory(); // non-blocking
-    if (isNewDraw) showToast('🎉 อัปเดตผลรางวัลงวดใหม่แล้ว: ' + data.date);
+    if (isNewDraw && !pending) showToast('🎉 อัปเดตผลรางวัลงวดใหม่แล้ว: ' + data.date);
   } catch (err) {
     document.getElementById('drawDateBadge').innerHTML = '⚠️ ดึงข้อมูลไม่ได้';
     document.getElementById('lottoContent').innerHTML =
@@ -840,7 +877,8 @@ async function fetchLotto() {
 
 async function fetchHistory() {
   try {
-    const list = await apiFetch('/list');
+    // The API route is /list/:page — a bare /list 404s.
+    const list = await apiFetch('/list/1');
     if (!Array.isArray(list) || list.length === 0) return;
 
     // Skip index 0 (= current draw), fetch up to 5 past draws
@@ -852,8 +890,10 @@ async function fetchHistory() {
       if (r.status === 'fulfilled' && r.value) {
         var d = r.value;
         var first = d.prizes && d.prizes.find(function(p){ return p.name === 'รางวัลที่ 1'; });
-        if (d.date && first) {
-          lottoHistory.push({ date: d.date, first: first.number[0] || '-' });
+        var num = first && first.number && first.number[0];
+        // Skip incomplete/unpublished draws (empty array or masked "x" digits)
+        if (d.date && num && !/x/i.test(num)) {
+          lottoHistory.push({ date: d.date, first: num });
         }
       }
     });
@@ -882,7 +922,7 @@ function renderHistory() {
   }).join('');
 }
 
-function renderLotto(data) {
+function renderLotto(data, pending) {
   // Update date badge + last-checked timestamp
   const now = new Date();
   const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
@@ -895,6 +935,15 @@ function renderLotto(data) {
   const p2 = prizes.find(p => p.name === "รางวัลที่ 2");
 
   let html = '';
+
+  // Pending notice — today's draw exists but results aren't posted yet
+  if (pending) {
+    html += `<div style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);
+      border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--gold-lt);
+      display:flex;gap:8px;align-items:flex-start;">
+      <span>⏳</span><span>ผลการออกรางวัลงวดล่าสุดยังไม่ประกาศ — กำลังแสดงผลงวดก่อนหน้า ระบบจะอัปเดตให้อัตโนมัติทันทีที่มีผลใหม่</span>
+    </div>`;
+  }
 
   // First prize
   if (firstPrize) {
