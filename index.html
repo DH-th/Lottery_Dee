@@ -785,21 +785,84 @@ function showPage(id) {
 // History:  GET /list  → [{ id, url, date }, ...]
 //           GET /lotto/:id → same as /latest response
 // ================================================================
-async function apiFetch(path) {
-  // Cache-busting: append a unique timestamp so neither the browser
-  // nor any CDN/proxy in between ever serves a stale cached response.
+// ================================================================
+// DATA SOURCES
+// ================================================================
+// PRIMARY: Government Lottery Office (GLO) official API.
+//   Source: https://gdcatalog.glo.or.th (Thai government open-data catalog)
+//   POST https://www.glo.or.th/api/lottery/getLatestLottery
+//   Response shape: { response: { result: { data: {
+//     first:  { number: [{ value: "123456" }] },
+//     second: { number: [{ value: "..." }, ...] },
+//     third, fourth, fifth,
+//     last2:  { number: [{ value: "12" }] },
+//     last3f: { number: [{ value: "123" }, ...] },
+//     last3b: { number: [{ value: "123" }, ...] },
+//     near1:  { number: [{ value: "..." }, { value: "..." }] },
+//   }, displayDate, period } } }
+//
+// FALLBACK: rayriffy/thai-lotto-api, which itself scrapes sanook.com.
+//   This is a secondary, best-effort source only — used if the GLO
+//   endpoint is unreachable (e.g. blocked by the browser's CORS policy).
+// ================================================================
+
+const GLO_LATEST_URL = 'https://www.glo.or.th/api/lottery/getLatestLottery';
+const GLO_BY_DATE_URL = 'https://www.glo.or.th/api/checking/getLotteryResult';
+
+// Maps a GLO API prize bucket into our internal { name, number[] } shape.
+function gloBucket(name, label, bucket) {
+  const numbers = (bucket && Array.isArray(bucket.number))
+    ? bucket.number.map(n => (n && n.value) ? String(n.value) : '').filter(Boolean)
+    : [];
+  return { id: name, name: label, number: numbers };
+}
+
+// Converts a raw GLO API JSON response into our internal data shape:
+// { date, prizes: [...], runningNumbers: [...] }
+function normalizeGloResponse(json) {
+  const data = json && json.response && json.response.result && json.response.result.data;
+  if (!data) throw new Error('unexpected GLO response shape');
+
+  const displayDate = json.response.result.displayDate || json.response.result.period || '';
+  if (!displayDate) throw new Error('GLO response missing date');
+
+  const prizes = [
+    gloBucket('prizeFirst', 'รางวัลที่ 1', data.first),
+    gloBucket('prizeFirstNear', 'รางวัลข้างเคียงรางวัลที่ 1', data.near1),
+    gloBucket('prizeSecond', 'รางวัลที่ 2', data.second),
+    gloBucket('prizeThird', 'รางวัลที่ 3', data.third),
+    gloBucket('prizeForth', 'รางวัลที่ 4', data.fourth),
+    gloBucket('prizeFifth', 'รางวัลที่ 5', data.fifth),
+  ];
+  const runningNumbers = [
+    gloBucket('runningNumberFrontThree', 'รางวัลเลขหน้า 3 ตัว', data.last3f),
+    gloBucket('runningNumberBackThree', 'รางวัลเลขท้าย 3 ตัว', data.last3b),
+    gloBucket('runningNumberBackTwo', 'รางวัลเลขท้าย 2 ตัว', data.last2),
+  ];
+
+  return { date: displayDate, prizes, runningNumbers };
+}
+
+// Fetches the latest draw directly from the GLO government API.
+async function fetchFromGlo() {
+  const r = await fetch(GLO_LATEST_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
+  });
+  if (!r.ok) throw new Error('GLO HTTP ' + r.status);
+  const json = await r.json();
+  return normalizeGloResponse(json);
+}
+
+// Secondary fallback: rayriffy's sanook-scraping API, tried with a small
+// chain of public CORS proxies in case the direct call is blocked.
+async function fetchFromRayriffy(path) {
   const bust   = '_=' + Date.now();
   const sep    = path.includes('?') ? '&' : '?';
   const direct = 'https://lotto.api.rayriffy.com' + path + sep + bust;
-
-  // fetchOpts intentionally avoids custom headers — adding headers like
-  // Cache-Control forces a CORS preflight (OPTIONS) request, which some
-  // proxy/CDN layers in front of the API mishandle and reject outright.
   const fetchOpts = { cache: 'no-store' };
 
-  // Try a chain of request strategies in order: direct call first,
-  // then a series of public CORS proxies as fallback if the browser
-  // blocks the direct request (e.g. missing/blocked CORS headers).
   const attempts = [
     { label: 'direct', url: direct },
     { label: 'corsproxy.io', url: 'https://corsproxy.io/?url=' + encodeURIComponent(direct) },
@@ -823,10 +886,8 @@ async function apiFetch(path) {
 }
 
 // Checks whether a draw's prize numbers are actually published yet.
-// The upstream source sometimes returns a page for the latest date
-// with empty number arrays (or "x"-masked placeholders) before the
-// official results are posted — this is not a connection problem,
-// it just means today's draw isn't live yet.
+// Some sources briefly return a page for the latest date with empty
+// number arrays (or "x"-masked placeholders) before results are posted.
 function isDrawComplete(data) {
   if (!data || !Array.isArray(data.prizes)) return false;
   const first = data.prizes.find(p => p.name === 'รางวัลที่ 1');
@@ -837,53 +898,62 @@ function isDrawComplete(data) {
 }
 
 async function fetchLotto() {
+  const sourceErrors = [];
+  let data = null;
+  let usedFallback = false;
+
+  // 1) Try the official GLO government API first.
   try {
-    let data = await apiFetch('/latest');
-    let pending = false;
+    data = await fetchFromGlo();
+  } catch (e) {
+    sourceErrors.push('GLO: ' + e.message);
+  }
 
-    if (!isDrawComplete(data)) {
-      // Today's draw isn't published yet — fall back to the most
-      // recent complete draw so the page still shows real numbers,
-      // and flag it so the user knows today's result is pending.
-      pending = true;
-      try {
-        const list = await apiFetch('/list/1');
-        if (Array.isArray(list) && list.length > 1) {
-          const prevId = list[1].id;
-          const prevData = await apiFetch('/lotto/' + prevId);
-          if (isDrawComplete(prevData)) data = prevData;
-        }
-      } catch (e) { /* keep original (incomplete) data as last resort */ }
+  // 2) Fall back to the rayriffy/sanook scraper if GLO failed or
+  //    returned incomplete results.
+  if (!data || !isDrawComplete(data)) {
+    try {
+      const rrData = await fetchFromRayriffy('/latest');
+      if (isDrawComplete(rrData) || !data) {
+        data = rrData;
+        usedFallback = true;
+      }
+    } catch (e) {
+      sourceErrors.push('rayriffy: ' + e.message);
     }
+  }
 
-    const isNewDraw = lottoData && lottoData.date !== data.date;
-    lottoData = data;
-    renderLotto(lottoData, pending);
-    buildShareImage(lottoData);
-    document.getElementById('shareSection').style.display = 'block';
-    fetchHistory(); // non-blocking
-    if (isNewDraw && !pending) showToast('🎉 อัปเดตผลรางวัลงวดใหม่แล้ว: ' + data.date);
-  } catch (err) {
+  if (!data) {
     document.getElementById('drawDateBadge').innerHTML = '⚠️ ดึงข้อมูลไม่ได้';
     document.getElementById('lottoContent').innerHTML =
       '<div style="text-align:center;padding:32px;color:var(--muted);">' +
       '<div style="font-size:2rem;margin-bottom:8px;">😔</div>' +
-      '<div>ไม่สามารถเชื่อมต่อ API<br>' +
-      '<small style="font-size:10px;opacity:.6;">' + err.message + '</small></div>' +
+      '<div>ไม่สามารถเชื่อมต่อแหล่งข้อมูลใดได้เลย<br>' +
+      '<small style="font-size:10px;opacity:.6;">' + sourceErrors.join(' | ') + '</small></div>' +
       '<button class="btn-primary" style="margin-top:16px;" onclick="fetchLotto()">🔄 ลองใหม่</button>' +
       '</div>';
+    return;
   }
+
+  const pending = !isDrawComplete(data);
+  const isNewDraw = lottoData && lottoData.date !== data.date;
+  lottoData = data;
+  renderLotto(lottoData, pending);
+  buildShareImage(lottoData);
+  document.getElementById('shareSection').style.display = 'block';
+  fetchHistory(); // non-blocking
+  if (isNewDraw && !pending) showToast('🎉 อัปเดตผลรางวัลงวดใหม่แล้ว: ' + data.date);
 }
 
 async function fetchHistory() {
   try {
-    // The API route is /list/:page — a bare /list 404s.
-    const list = await apiFetch('/list/1');
+    // History is only available from the rayriffy/sanook source —
+    // the GLO API only exposes the latest draw and date-based lookup.
+    const list = await fetchFromRayriffy('/list/1');
     if (!Array.isArray(list) || list.length === 0) return;
 
-    // Skip index 0 (= current draw), fetch up to 5 past draws
     const past = list.slice(1, 6);
-    const results = await Promise.allSettled(past.map(item => apiFetch('/lotto/' + item.id)));
+    const results = await Promise.allSettled(past.map(item => fetchFromRayriffy('/lotto/' + item.id)));
 
     lottoHistory = [];
     results.forEach(function(r) {
@@ -891,7 +961,6 @@ async function fetchHistory() {
         var d = r.value;
         var first = d.prizes && d.prizes.find(function(p){ return p.name === 'รางวัลที่ 1'; });
         var num = first && first.number && first.number[0];
-        // Skip incomplete/unpublished draws (empty array or masked "x" digits)
         if (d.date && num && !/x/i.test(num)) {
           lottoHistory.push({ date: d.date, first: num });
         }
@@ -902,7 +971,6 @@ async function fetchHistory() {
     renderHistory();
   } catch (e) {
     console.warn('History fetch failed:', e.message);
-    // Restore cached data
     try {
       var cached = JSON.parse(localStorage.getItem('lottoHistory') || '[]');
       if (cached.length) { lottoHistory = cached; renderHistory(); }
