@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>รถไฟฟ้าพิมพ์เร็ว · Bangkok Transit Typing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220;
+    --bg-soft:#101A2E;
+    --panel:#15233C;
+    --sign:#1B2C4A;
+    --line:#22365A;
+    --ink:#EAF1FB;
+    --ink-dim:#8CA0C0;
+    --sukhumvit:#7DBE38;
+    --silom:#00918B;
+    --blue:#2D6FD2;
+    --arl:#D6224C;
+    --gold:#F3B229;
+    --danger:#FF5D6C;
+    --ok:#54D98C;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 500px at 50% -10%, #16305c33, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Kanit',sans-serif;
+    display:flex;flex-direction:column;align-items:center;
+    height:100dvh;overflow:hidden;
+  }
+  .app{width:100%;max-width:860px;padding:14px 14px 18px;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .roundel{
+    width:38px;height:38px;border-radius:50%;
+    border:3px solid var(--gold);
+    background:conic-gradient(var(--sukhumvit) 0 25%, var(--silom) 0 50%, var(--blue) 0 75%, var(--arl) 0 100%);
+    box-shadow:0 0 0 3px #0B1220, 0 0 18px #f3b22944;
+    flex:none;
+  }
+  .brand h1{font-size:1rem;font-weight:600;line-height:1.15}
+  .brand h1 small{display:block;font-weight:300;color:var(--ink-dim);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase}
+  .hud{display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;align-items:center}
+  .hud .stat{text-align:right}
+  .hud .stat b{display:block;font-size:1rem;color:var(--gold)}
+  .hud .stat span{font-size:.58rem;letter-spacing:.12em;color:var(--ink-dim);font-family:'Kanit',sans-serif;text-transform:uppercase}
+  .lives{display:flex;gap:4px}
+  .lives i{width:11px;height:11px;border-radius:50%;background:var(--ok);display:block;transition:all .3s}
+  .lives i.lost{background:#3a4a68;transform:scale(.7)}
+
+  /* ---------- screens ---------- */
+  .screen{display:none;flex-direction:column;gap:12px;flex:1;min-height:0}
+  .screen.active{display:flex;animation:fadeUp .35s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ---------- menu ---------- */
+  #scrMenu{overflow-y:auto}
+  .menu-hero{padding:2px 4px}
+  .menu-hero h2{font-size:1.35rem;font-weight:600}
+  .menu-hero h2 .th{color:var(--gold)}
+  .menu-hero p{color:var(--ink-dim);font-weight:300;font-size:.85rem;margin-top:2px}
+  .line-grid{display:flex;flex-direction:column;gap:9px}
+  .line-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px 16px;cursor:pointer;text-align:left;color:var(--ink);
+    font-family:inherit;transition:transform .15s, border-color .15s, box-shadow .15s;
+    width:100%;
+  }
+  .line-card:hover,.line-card:focus-visible{transform:translateY(-2px);border-color:var(--c);box-shadow:0 6px 22px -8px var(--c)}
+  .line-card:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+  .line-card .chip{
+    width:52px;height:32px;border-radius:8px;background:var(--c);flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.78rem;color:#fff;
+    text-shadow:0 1px 2px #0006;
+  }
+  .line-card .meta{flex:1;min-width:0}
+  .line-card .meta b{display:block;font-weight:500;font-size:.95rem}
+  .line-card .meta span{color:var(--ink-dim);font-weight:300;font-size:.74rem}
+  .line-card .count{font-family:'IBM Plex Mono',monospace;color:var(--ink-dim);font-size:.72rem;flex:none}
+  .howto{color:var(--ink-dim);font-size:.78rem;font-weight:300;text-align:center;padding:2px 10px}
+  .howto b{color:var(--ink);font-weight:500}
+
+  /* ---------- map ---------- */
+  .map-wrap{
+    position:relative;flex:1;min-height:200px;
+    background:
+      radial-gradient(700px 400px at 30% 20%, #14243f66, transparent 70%),
+      var(--bg-soft);
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    touch-action:none;
+  }
+  .map-wrap svg{width:100%;height:100%;display:block}
+  #scrMap .map-wrap{cursor:grab}
+  #scrMap .map-wrap.dragging{cursor:grabbing}
+  .st-dot{transition:fill .3s}
+  .st-label{
+    font-family:'Kanit',sans-serif;font-weight:400;fill:#B9C8E2;
+    paint-order:stroke;stroke:#0B1220;stroke-width:4px;stroke-linejoin:round;
+    pointer-events:none;
+  }
+  .st-label.ic{font-weight:600;fill:#EAF1FB}
+  .g-line.off{display:none}
+  .ic-link{stroke-linecap:round;opacity:.95}
+  .ic-link.ic-outer{stroke:#0B1220}
+  .ic-link.ic-inner{stroke:#EAF1FB}
+  .ic-link.off{display:none}
+  .river{fill:none;stroke:#1C3350;stroke-width:34;stroke-linecap:round;opacity:.8}
+
+  /* current-station pulse */
+  .pulse{fill:none;stroke-width:3;animation:pulse 1.4s ease-out infinite;pointer-events:none}
+  @keyframes pulse{
+    0%{r:12px;opacity:.9}
+    100%{r:34px;opacity:0}
+  }
+
+  /* filter chips (map screen) */
+  .map-top{
+    position:absolute;top:10px;left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap;
+    z-index:2;pointer-events:none;
+  }
+  .map-top .chip-toggle{
+    pointer-events:auto;
+    display:flex;align-items:center;gap:7px;
+    background:#0e1830E6;border:1px solid var(--line);border-radius:99px;
+    padding:6px 13px;color:var(--ink);font-family:inherit;font-size:.76rem;font-weight:400;
+    cursor:pointer;transition:all .15s;backdrop-filter:blur(4px);
+  }
+  .chip-toggle .sw{width:11px;height:11px;border-radius:50%;background:var(--c);transition:all .15s;box-shadow:0 0 8px var(--c)}
+  .chip-toggle.off{color:var(--ink-dim);border-style:dashed}
+  .chip-toggle.off .sw{background:transparent;border:2px solid var(--ink-dim);box-shadow:none}
+  .map-bottom{
+    position:absolute;bottom:10px;right:10px;display:flex;gap:8px;z-index:2;
+  }
+  .map-btn{
+    background:#0e1830E6;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+    font-family:inherit;font-size:.78rem;padding:8px 14px;cursor:pointer;backdrop-filter:blur(4px);
+  }
+  .map-btn:hover{border-color:var(--ink-dim)}
+  .map-hint{
+    position:absolute;bottom:12px;left:12px;color:var(--ink-dim);font-size:.68rem;font-weight:300;
+    z-index:2;pointer-events:none;
+  }
+
+  /* ---------- game panel ---------- */
+  .line-banner{
+    display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--ink-dim);
+    font-weight:300;flex:none;
+  }
+  .line-banner .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+  .line-banner b{color:var(--ink);font-weight:500}
+  .line-banner .quit{margin-left:auto;background:none;border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:8px;padding:3px 12px;font-family:inherit;font-size:.74rem;cursor:pointer}
+  .line-banner .quit:hover{color:var(--ink);border-color:var(--ink-dim)}
+
+  .sign{
+    background:linear-gradient(180deg,#20345A,var(--sign));
+    border:1px solid #2E4470;border-radius:var(--radius);
+    padding:12px 16px 14px;position:relative;overflow:hidden;flex:none;
+    box-shadow:0 14px 40px -18px #000c, inset 0 1px 0 #ffffff14;
+  }
+  .sign::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c)}
+  .sign .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .sign .code{
+    background:var(--c);color:#fff;border-radius:9px;padding:4px 11px;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.95rem;flex:none;
+    text-shadow:0 1px 2px #0006;box-shadow:inset 0 -3px 0 #0003;
+  }
+  .sign .thai{font-size:1.35rem;font-weight:600;line-height:1.15;word-break:break-word}
+  .sign .next-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-left:auto}
+  .target{
+    margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:1.28rem;
+    letter-spacing:.05em;word-break:break-word;line-height:1.5;
+  }
+  .target span{color:#5B6E93;border-bottom:2px solid #33456B;padding-bottom:1px}
+  .target span.done{color:var(--ok);border-color:var(--ok)}
+  .target span.cursor{border-color:var(--gold);animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{border-color:transparent}}
+  .sign.err{animation:shake .3s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .combo-pop{
+    position:absolute;right:14px;bottom:10px;font-family:'IBM Plex Mono',monospace;
+    color:var(--gold);font-weight:600;font-size:.9rem;opacity:0;transition:opacity .2s;
+  }
+  .combo-pop.show{opacity:1}
+
+  .input-row{display:flex;gap:10px;align-items:center;flex:none}
+  .type-input{
+    flex:1;background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:1.05rem;
+    padding:11px 15px;outline:none;transition:border-color .15s;min-width:0;
+  }
+  .type-input:focus{border-color:var(--gold)}
+  .type-input::placeholder{color:#4A5C80;font-family:'Kanit',sans-serif;font-weight:300}
+  .timeleft{
+    font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:var(--ink-dim);
+    min-width:56px;text-align:right;flex:none;
+  }
+  .timeleft.hurry{color:var(--danger);animation:hurryTxt .3s infinite}
+  @keyframes hurryTxt{50%{opacity:.5}}
+
+  /* ---------- result ---------- */
+  #scrResult{justify-content:center}
+  .result{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px 22px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;
+  }
+  .result .big{font-size:1.5rem;font-weight:600}
+  .result .big.win{color:var(--gold)}
+  .result .big.lose{color:var(--danger)}
+  .result .sub{color:var(--ink-dim);font-weight:300;font-size:.9rem}
+  .result .score-line{font-family:'IBM Plex Mono',monospace;font-size:2.3rem;color:var(--gold);font-weight:600;margin:4px 0}
+  .result .stats{display:flex;gap:20px;justify-content:center;margin:4px 0 10px;flex-wrap:wrap}
+  .result .stats div b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.1rem}
+  .result .stats div span{font-size:.62rem;letter-spacing:.1em;color:var(--ink-dim);text-transform:uppercase}
+  .btn{
+    background:var(--gold);color:#1a1405;border:none;border-radius:10px;
+    padding:11px 24px;font-family:'Kanit',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px var(--gold)}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line)}
+  .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+    background:var(--danger);color:#fff;font-weight:500;font-size:.85rem;
+    padding:8px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:all .25s;
+    box-shadow:0 10px 30px -10px #000;z-index:9;
+  }
+  .toast.ok{background:var(--ok);color:#06210f}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:520px){
+    .sign .thai{font-size:1.1rem}
+    .target{font-size:1.02rem}
+    .hud{gap:9px}
+    .brand h1{font-size:.9rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="roundel" aria-hidden="true"></div>
+      <h1>รถไฟฟ้าพิมพ์เร็ว<small>Bangkok Transit Typing</small></h1>
+    </div>
+    <div class="hud" id="hud" hidden>
+      <div class="lives" id="lives" aria-label="lives"></div>
+      <div class="stat"><b id="hudCombo">×0</b><span>combo</span></div>
+      <div class="stat"><b id="hudScore">0</b><span>score</span></div>
+    </div>
+  </header>
+
+  <!-- MENU -->
+  <section class="screen active" id="scrMenu">
+    <div class="menu-hero">
+      <h2>เลือกสายรถไฟฟ้า <span class="th">·</span> Choose your line</h2>
+      <p>รถไฟวิ่งบนแผนที่จริง — พิมพ์ชื่อสถานีให้ทันก่อนรถไฟเข้าชานชาลา<br>The train moves on the real map. Type each station name before it arrives.</p>
+    </div>
+    <div class="line-grid" id="lineGrid"></div>
+    <p class="howto">⌨️ พิมพ์ชื่อภาษาอังกฤษ · Type the <b>English name</b>. พิมพ์ผิดคอมโบขาด พิมพ์ไม่ทันเสียหัวใจ ❤️ ×3</p>
+  </section>
+
+  <!-- MAP BROWSER -->
+  <section class="screen" id="scrMap">
+    <div class="map-wrap" id="mapWrap">
+      <div class="map-top" id="filterChips"></div>
+      <div class="map-bottom">
+        <button class="map-btn" id="btnFit">⛶ ทั้งแผนที่ · Fit</button>
+        <button class="map-btn" id="btnMapBack">← เมนู · Menu</button>
+      </div>
+      <div class="map-hint">ลาก = เลื่อน · สกรอล/บีบ = ซูม &nbsp;|&nbsp; drag to pan · scroll / pinch to zoom</div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="scrGame">
+    <div class="line-banner" id="lineBanner">
+      <span class="dot"></span><b id="bannerName"></b>
+      <span id="bannerProgress"></span>
+      <button class="quit" id="btnQuit">ออก / Quit</button>
+    </div>
+
+    <div class="map-wrap" id="gameMapSlot"></div>
+
+    <div class="sign" id="sign">
+      <div class="combo-pop" id="comboPop"></div>
+      <div class="row">
+        <span class="code" id="stCode">E4</span>
+        <span class="thai" id="stThai">อโศก</span>
+        <span class="next-label">Next station</span>
+      </div>
+      <div class="target" id="target" aria-live="polite"></div>
+    </div>
+
+    <div class="input-row">
+      <input class="type-input" id="input" type="text" autocomplete="off" autocorrect="off"
+             autocapitalize="off" spellcheck="false" placeholder="พิมพ์ที่นี่… type here" aria-label="Type the station name">
+      <span class="timeleft" id="timeLeft">0.0s</span>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="scrResult">
+    <div class="result">
+      <div class="big" id="resTitle"></div>
+      <div class="sub" id="resSub"></div>
+      <div class="score-line" id="resScore">0</div>
+      <div class="stats">
+        <div><b id="resStations">0</b><span>สถานี / stations</span></div>
+        <div><b id="resAcc">100%</b><span>ความแม่นยำ / accuracy</span></div>
+        <div><b id="resCombo">×0</b><span>คอมโบสูงสุด / max combo</span></div>
+        <div><b id="resWpm">0</b><span>ตัวอักษร/นาที · cpm</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnRetry">เล่นอีกครั้ง · Retry</button>
+        <button class="btn ghost" id="btnMenu">เลือกสายใหม่ · Lines</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   DATA — schematic Bangkok transit map
+   stations: [code, english, thai, x, y, (labelDx, labelDy, anchor)?]
+   ============================================================ */
+const LINES = [
+  {
+    id:'sukhumvit', hex:'#7DBE38', cssVar:'var(--sukhumvit)',
+    name:'BTS สายสุขุมวิท', en:'Sukhumvit Line',
+    stations:[
+      ['N8','Mo Chit','หมอชิต',420,150,[-16,4,'end']],
+      ['N7','Saphan Khwai','สะพานควาย',420,215,[-16,4,'end']],
+      ['N5','Ari','อารีย์',420,280,[-16,4,'end']],
+      ['N4','Sanam Pao','สนามเป้า',420,345,[-16,4,'end']],
+      ['N3','Victory Monument','อนุสาวรีย์ชัยสมรภูมิ',420,410,[-16,4,'end']],
+      ['N2','Phaya Thai','พญาไท',420,475,[-16,4,'end']],
+      ['N1','Ratchathewi','ราชเทวี',420,542,[-16,4,'end']],
+      ['CEN','Siam','สยาม',420,610,[-14,-16,'end']],
+      ['E1','Chit Lom','ชิดลม',505,610,[0,-18,'middle']],
+      ['E2','Phloen Chit','เพลินจิต',585,610,[6,-18,'middle']],
+      ['E3','Nana','นานา',652,652,[14,-8,'start']],
+      ['E4','Asok','อโศก',716,700,[-16,18,'end']],
+      ['E5','Phrom Phong','พร้อมพงษ์',782,748,[14,-8,'start']],
+      ['E6','Thong Lo','ทองหล่อ',848,796,[14,-8,'start']],
+      ['E7','Ekkamai','เอกมัย',914,844,[14,-8,'start']],
+      ['E8','Phra Khanong','พระโขนง',980,888,[14,-8,'start']],
+      ['E9','On Nut','อ่อนนุช',1046,920,[14,-8,'start']],
+      ['E10','Bang Chak','บางจาก',1112,946,[10,-12,'start']],
+      ['E11','Punnawithi','ปุณณวิถี',1172,966,[10,-12,'start']],
+      ['E12','Udom Suk','อุดมสุข',1232,986,[10,-12,'start']],
+      ['E13','Bang Na','บางนา',1292,1006,[10,-12,'start']],
+      ['E14','Bearing','แบริ่ง',1352,1026,[10,-12,'start']],
+      ['E15','Samrong','สำโรง',1412,1046,[8,-14,'start']],
+    ]
+  },
+  {
+    id:'silom', hex:'#00918B', cssVar:'var(--silom)',
+    name:'BTS สายสีลม', en:'Silom Line',
+    stations:[
+      ['W1','National Stadium','สนามกีฬาแห่งชาติ',325,610,[-6,-18,'end']],
+      ['CEN','Siam','สยาม',420,610,null,true], /* shared point, label skipped */
+      ['S1','Ratchadamri','ราชดำริ',455,678,[14,4,'start']],
+      ['S2','Sala Daeng','ศาลาแดง',452,750,[-14,-10,'end']],
+      ['S3','Chong Nonsi','ช่องนนทรี',402,806,[-14,2,'end']],
+      ['S4','Saint Louis','เซนต์หลุยส์',352,846,[-14,2,'end']],
+      ['S5','Surasak','สุรศักดิ์',302,886,[-14,2,'end']],
+      ['S6','Saphan Taksin','สะพานตากสิน',252,926,[-14,2,'end']],
+      ['S7','Krung Thon Buri','กรุงธนบุรี',185,956,[-14,-8,'end']],
+      ['S8','Wongwian Yai','วงเวียนใหญ่',120,980,[-14,-8,'end']],
+      ['S9','Pho Nimit','โพธิ์นิมิตร',95,1015,[14,10,'start']],
+      ['S10','Talat Phlu','ตลาดพลู',78,1055,[14,10,'start']],
+      ['S11','Wutthakat','วุฒากาศ',62,1095,[14,10,'start']],
+      ['S12','Bang Wa','บางหว้า',50,1135,[14,10,'start']],
+    ]
+  },
+  {
+    id:'blue', hex:'#2D6FD2', cssVar:'var(--blue)',
+    name:'MRT สายสีน้ำเงิน', en:'MRT Blue Line',
+    stations:[
+      ['BL28','Hua Lamphong','หัวลำโพง',322,802,[-8,-16,'end']],
+      ['BL27','Sam Yan','สามย่าน',388,778,[-4,-16,'middle']],
+      ['BL26','Si Lom','สีลม',466,768,[14,16,'start']],
+      ['BL25','Lumphini','ลุมพินี',540,790,[4,22,'middle']],
+      ['BL24','Khlong Toei','คลองเตย',625,806,[4,22,'middle']],
+      ['BL23','Sirikit Centre','ศูนย์การประชุมแห่งชาติสิริกิติ์',695,772,[12,18,'start']],
+      ['BL22','Sukhumvit','สุขุมวิท',728,712,[16,6,'start']],
+      ['BL21','Phetchaburi','เพชรบุรี',736,632,[16,6,'start']],
+      ['BL20','Phra Ram 9','พระราม 9',752,552,[16,6,'start']],
+      ['BL19','Cultural Centre','ศูนย์วัฒนธรรมแห่งประเทศไทย',762,474,[16,6,'start']],
+      ['BL18','Huai Khwang','ห้วยขวาง',762,402,[16,6,'start']],
+      ['BL17','Sutthisan','สุทธิสาร',762,330,[16,6,'start']],
+      ['BL16','Ratchadaphisek','รัชดาภิเษก',762,258,[16,6,'start']],
+      ['BL15','Lat Phrao','ลาดพร้าว',742,192,[16,-4,'start']],
+      ['BL14','Phahon Yothin','พหลโยธิน',640,158,[8,-16,'middle']],
+      ['BL13','Chatuchak Park','สวนจตุจักร',505,150,[10,-18,'start']],
+      ['BL12','Kamphaeng Phet','กำแพงเพชร',400,105,[-12,-10,'end']],
+      ['BL11','Bang Sue','บางซื่อ',320,72,[-12,-8,'end']],
+    ]
+  },
+  {
+    id:'arl', hex:'#D6224C', cssVar:'var(--arl)',
+    name:'Airport Rail Link', en:'ARL · City Line',
+    stations:[
+      ['A8','Phaya Thai','พญาไท',432,487,[12,20,'start']],
+      ['A7','Ratchaprarop','ราชปรารภ',525,510,[6,22,'middle']],
+      ['A6','Makkasan','มักกะสัน',700,600,[-8,22,'middle']],
+      ['A5','Ramkhamhaeng','รามคำแหง',860,585,[0,-16,'middle']],
+      ['A4','Hua Mak','หัวหมาก',1000,585,[0,-16,'middle']],
+      ['A3','Ban Thap Chang','บ้านทับช้าง',1140,585,[0,-16,'middle']],
+      ['A2','Lat Krabang','ลาดกระบัง',1280,585,[0,-16,'middle']],
+      ['A1','Suvarnabhumi','สุวรรณภูมิ',1408,628,[6,20,'middle']],
+    ]
+  },
+];
+
+/* interchanges: [lineA, codeA, lineB, codeB] — drawn as white capsules */
+const INTERCHANGES = [
+  ['silom','S2','blue','BL26'],
+  ['sukhumvit','E4','blue','BL22'],
+  ['sukhumvit','N8','blue','BL13'],
+  ['sukhumvit','N2','arl','A8'],
+  ['blue','BL21','arl','A6'],
+];
+/* Siam: same coordinates on both lines — drawn as one big hub */
+const HUBS = [{x:420,y:610,label:'Siam'}];
+
+const MAP_BOUNDS = {x:0, y:30, w:1520, h:1180};
+
+/* ============================================================
+   SVG MAP construction (one map, moved between screens)
+   ============================================================ */
+const SVGNS='http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+const svg = document.createElementNS(SVGNS,'svg');
+svg.setAttribute('viewBox',`${MAP_BOUNDS.x} ${MAP_BOUNDS.y} ${MAP_BOUNDS.w} ${MAP_BOUNDS.h}`);
+svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+
+const stationIndex = {};   // 'line:code' -> {x,y,dotEl,line}
+const lineGroups = {};     // lineId -> <g> (track)
+const dotGroups = {};      // lineId -> <g> (dots + labels, drawn above capsules)
+const icLinks = [];        // {els, l1, l2}
+
+function el(tag, attrs, parent){
+  const e=document.createElementNS(SVGNS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  if(parent)parent.appendChild(e);
+  return e;
+}
+
+/* Chao Phraya river hint (west side, crossing Silom line near Saphan Taksin) */
+el('path',{class:'river', d:'M 150 560 C 190 680, 260 800, 215 940 C 185 1030, 120 1090, 90 1180'},svg);
+
+/* line groups */
+LINES.forEach(line=>{
+  const g=el('g',{class:'g-line',id:'g-'+line.id},svg);
+  lineGroups[line.id]=g;
+  const pts=line.stations.map(s=>`${s[3]},${s[4]}`).join(' ');
+  el('polyline',{points:pts,fill:'none',stroke:'#0B1220','stroke-width':13,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+  el('polyline',{points:pts,fill:'none',stroke:line.hex,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+});
+
+/* interchange capsules */
+INTERCHANGES.forEach(([l1,c1,l2,c2])=>{
+  const A=findSt(l1,c1),B=findSt(l2,c2);
+  const outer=el('line',{class:'ic-link ic-outer',x1:A[3],y1:A[4],x2:B[3],y2:B[4],'stroke-width':17},svg);
+  const inner=el('line',{class:'ic-link ic-inner',x1:A[3],y1:A[4],x2:B[3],y2:B[4],'stroke-width':10},svg);
+  icLinks.push({els:[outer,inner],l1,l2});
+});
+function findSt(lineId,code){
+  return LINES.find(l=>l.id===lineId).stations.find(s=>s[0]===code);
+}
+
+/* dots + labels — in their own per-line groups ABOVE the capsules */
+LINES.forEach(line=>{
+  const g=el('g',{class:'g-line',id:'gd-'+line.id},svg);
+  dotGroups[line.id]=g;
+  line.stations.forEach(s=>{
+    const [code,en,th,x,y,lab,shared]=s;
+    if(shared){
+      // shared physical station (Siam): reuse the dot already created by the other line
+      const owner=Object.values(stationIndex).find(st=>st.x===x&&st.y===y);
+      if(owner)stationIndex[line.id+':'+code]={x,y,dot:owner.dot,line};
+      return;
+    }
+    const isHub=HUBS.some(h=>h.x===x&&h.y===y);
+    const dot=el('circle',{class:'st-dot',cx:x,cy:y,r:isHub?11:7,
+      fill:'#EAF1FB',stroke:isHub?'#0B1220':line.hex,'stroke-width':isHub?4:3.5},g);
+    stationIndex[line.id+':'+code]={x,y,dot,line};
+    const isIC=isHub||INTERCHANGES.some(p=>(p[0]===line.id&&p[1]===code)||(p[2]===line.id&&p[3]===code));
+    const [dx,dy,anc]=lab||[12,-10,'start'];
+    el('text',{class:'st-label'+(isIC?' ic':''),x:x+dx,y:y+dy,'text-anchor':anc,
+      'font-size':isIC?21:18},g).textContent=en;
+  });
+});
+
+/* game overlay: visited markers + train */
+const overlay=el('g',{id:'overlay'},svg);
+const pulseC=el('circle',{class:'pulse',r:12,stroke:'#F3B229',cx:-100,cy:-100},overlay);
+const trainG=el('g',{id:'train',visibility:'hidden'},overlay);
+el('rect',{x:-19,y:-10,width:38,height:20,rx:7,fill:'#EAF1FB',stroke:'#0B1220','stroke-width':2.5},trainG);
+const trainStripe=el('rect',{x:-19,y:6,width:38,height:4,rx:2,fill:'#F3B229'},trainG);
+el('rect',{x:-13,y:-5,width:7,height:7,rx:1.6,fill:'#16233d'},trainG);
+el('rect',{x:-3.5,y:-5,width:7,height:7,rx:1.6,fill:'#16233d'},trainG);
+el('rect',{x:6,y:-5,width:7,height:7,rx:1.6,fill:'#16233d'},trainG);
+const headlight=el('circle',{cx:22,cy:0,r:4,fill:'#F3B229',opacity:.9},trainG);
+
+/* ============================================================
+   CAMERA
+   ============================================================ */
+const cam={cx:MAP_BOUNDS.x+MAP_BOUNDS.w/2, cy:MAP_BOUNDS.y+MAP_BOUNDS.h/2, w:MAP_BOUNDS.w, follow:false, tx:0, ty:0, tw:560};
+let mapHost=null;
+function applyCam(){
+  if(!mapHost)return;
+  const r=mapHost.getBoundingClientRect();
+  const aspect=r.height/Math.max(r.width,1);
+  const h=cam.w*aspect;
+  svg.setAttribute('viewBox',`${cam.cx-cam.w/2} ${cam.cy-h/2} ${cam.w} ${h}`);
+}
+function fitAll(){
+  if(!mapHost)return;
+  const r=mapHost.getBoundingClientRect();
+  const aspect=r.height/Math.max(r.width,1);
+  // choose w so both dims fit
+  cam.w = Math.max(MAP_BOUNDS.w, MAP_BOUNDS.h/aspect) * 1.04;
+  cam.cx = MAP_BOUNDS.x+MAP_BOUNDS.w/2;
+  cam.cy = MAP_BOUNDS.y+MAP_BOUNDS.h/2;
+  applyCam();
+}
+function camTick(){
+  if(cam.follow){
+    cam.cx += (cam.tx-cam.cx)*0.09;
+    cam.cy += (cam.ty-cam.cy)*0.09;
+    cam.w  += (cam.tw-cam.w)*0.09;
+    applyCam();
+  }
+  requestAnimationFrame(camTick);
+}
+requestAnimationFrame(camTick);
+
+/* ============================================================
+   MAP BROWSER: pan / zoom / filters
+   ============================================================ */
+const mapWrap=$('mapWrap');
+const pointers=new Map();
+let lastPinch=0;
+
+mapWrap.addEventListener('pointerdown',e=>{
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  mapWrap.setPointerCapture(e.pointerId);
+  mapWrap.classList.add('dragging');
+  if(pointers.size===2){
+    const [a,b]=[...pointers.values()];
+    lastPinch=Math.hypot(a.x-b.x,a.y-b.y);
+  }
+});
+mapWrap.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const p=pointers.get(e.pointerId);
+  const dx=e.clientX-p.x, dy=e.clientY-p.y;
+  p.x=e.clientX;p.y=e.clientY;
+  const r=mapWrap.getBoundingClientRect();
+  if(pointers.size===1){
+    cam.cx-=dx*(cam.w/r.width);
+    cam.cy-=dy*(cam.w/r.width);
+    applyCam();
+  }else if(pointers.size===2){
+    const [a,b]=[...pointers.values()];
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(lastPinch>0){
+      cam.w=clamp(cam.w*lastPinch/d,180,2600);
+      applyCam();
+    }
+    lastPinch=d;
+  }
+});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>
+  mapWrap.addEventListener(ev,e=>{
+    pointers.delete(e.pointerId);
+    if(pointers.size<2)lastPinch=0;
+    if(pointers.size===0)mapWrap.classList.remove('dragging');
+  })
+);
+mapWrap.addEventListener('wheel',e=>{
+  e.preventDefault();
+  cam.w=clamp(cam.w*(1+e.deltaY*0.0012),180,2600);
+  applyCam();
+},{passive:false});
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+
+/* filter chips */
+const lineVisible={};
+LINES.forEach(l=>lineVisible[l.id]=true);
+const chipsBox=$('filterChips');
+LINES.forEach(line=>{
+  const b=document.createElement('button');
+  b.className='chip-toggle';
+  b.style.setProperty('--c',line.cssVar);
+  b.innerHTML=`<span class="sw"></span>${line.name}`;
+  b.setAttribute('aria-pressed','true');
+  b.addEventListener('click',()=>{
+    lineVisible[line.id]=!lineVisible[line.id];
+    b.classList.toggle('off',!lineVisible[line.id]);
+    b.setAttribute('aria-pressed',String(lineVisible[line.id]));
+    lineGroups[line.id].classList.toggle('off',!lineVisible[line.id]);
+    dotGroups[line.id].classList.toggle('off',!lineVisible[line.id]);
+    icLinks.forEach(ic=>{
+      const show=lineVisible[ic.l1]&&lineVisible[ic.l2];
+      ic.els.forEach(elm=>elm.classList.toggle('off',!show));
+    });
+  });
+  chipsBox.appendChild(b);
+});
+$('btnFit').addEventListener('click',fitAll);
+
+/* ============================================================
+   MENU
+   ============================================================ */
+const scrMenu=$('scrMenu'),scrMap=$('scrMap'),scrGame=$('scrGame'),scrResult=$('scrResult');
+const input=$('input');
+let G=null, rafId=null;
+
+function buildMenu(){
+  const grid=$('lineGrid');
+  grid.innerHTML='';
+  // map browser card first
+  const mapCard=document.createElement('button');
+  mapCard.className='line-card';
+  mapCard.style.setProperty('--c','var(--ink-dim)');
+  mapCard.innerHTML=`
+    <span class="chip" style="background:#22365A">🗺️</span>
+    <span class="meta"><b>ดูแผนที่เส้นทาง · View the map</b><span>เปิด/ปิดแต่ละสายได้ · toggle each line on/off, pan & zoom</span></span>
+    <span class="count">map</span>`;
+  mapCard.addEventListener('click',openMapBrowser);
+  grid.appendChild(mapCard);
+
+  LINES.forEach(line=>{
+    const b=document.createElement('button');
+    b.className='line-card';
+    b.style.setProperty('--c',line.cssVar);
+    b.innerHTML=`
+      <span class="chip">${line.stations[0][0]}</span>
+      <span class="meta"><b>${line.name}</b><span>${line.en} · ${line.stations[0][1]} → ${line.stations[line.stations.length-1][1]}</span></span>
+      <span class="count">${line.stations.length} st.</span>`;
+    b.addEventListener('click',()=>startGame(line));
+    grid.appendChild(b);
+  });
+
+  const mix=document.createElement('button');
+  mix.className='line-card';
+  mix.style.setProperty('--c','var(--gold)');
+  mix.innerHTML=`
+    <span class="chip" style="background:conic-gradient(var(--sukhumvit) 0 25%,var(--silom) 0 50%,var(--blue) 0 75%,var(--arl) 0 100%)">ALL</span>
+    <span class="meta"><b>ทุกสาย สุ่มสถานี</b><span>All lines · 20 random stations · camera flies across the city</span></span>
+    <span class="count">20 st.</span>`;
+  mix.addEventListener('click',()=>{
+    const pool=[];
+    LINES.forEach(l=>l.stations.forEach((s,i)=>{
+      if(s[6])return; // skip duplicate Siam
+      pool.push({s,line:l,i});
+    }));
+    pool.sort(()=>Math.random()-.5);
+    const seen=new Set(),pick=[];
+    for(const p of pool){
+      if(seen.has(p.s[1]))continue;
+      seen.add(p.s[1]);pick.push(p);
+      if(pick.length===20)break;
+    }
+    startGame({
+      id:'mix',cssVar:'var(--gold)',hex:'#F3B229',
+      name:'ทุกสาย · All Lines',en:'Mixed',
+      stations:pick.map(p=>p.s),
+      srcLine:pick.map(p=>p.line),srcIdx:pick.map(p=>p.i),
+      mixed:true
+    });
+  });
+  grid.appendChild(mix);
+}
+buildMenu();
+
+function openMapBrowser(){
+  showScreen(scrMap);
+  cam.follow=false;
+  trainG.setAttribute('visibility','hidden');
+  pulseC.setAttribute('cx',-100);
+  resetDots();
+  mountMap($('mapWrap'));
+  fitAll();
+}
+$('btnMapBack').addEventListener('click',()=>showScreen(scrMenu));
+
+function mountMap(host){
+  mapHost=host;
+  host.appendChild(svg);
+  applyCam();
+}
+function resetDots(){
+  for(const k in stationIndex){
+    const st=stationIndex[k];
+    st.dot.setAttribute('fill','#EAF1FB');
+  }
+}
+
+/* ============================================================
+   GAME
+   ============================================================ */
+function startGame(line){
+  G={
+    line,idx:0,lives:3,score:0,combo:0,maxCombo:0,
+    typedChars:0,errChars:0,clearedChars:0,
+    startTime:performance.now(),
+    stationStart:0,stationTime:0,done:false,
+    legFrom:null,legTo:null,finishing:false,
+  };
+  showScreen(scrGame);
+  $('hud').hidden=false;
+  scrGame.style.setProperty('--c',line.cssVar);
+  $('lineBanner').style.setProperty('--c',line.cssVar);
+  $('bannerName').textContent=line.name;
+  mountMap($('gameMapSlot'));
+  resetDots();
+  // dim this run's stations to "unvisited"
+  runStations().forEach(({key})=>{
+    stationIndex[key].dot.setAttribute('fill','#0B1220');
+  });
+  trainG.setAttribute('visibility','visible');
+  trainStripe.setAttribute('fill',line.hex);
+  cam.follow=true;
+  cam.w=1200; // start pulled back, camera glides in
+  cam.tw=560;
+  updateHud();
+  nextStation();
+}
+
+function runStations(){
+  return G.line.stations.map((s,i)=>{
+    const lid = G.line.mixed ? G.line.srcLine[i].id : G.line.id;
+    return {s,key:lid+':'+s[0],lineId:lid};
+  });
+}
+function stKey(i){
+  const lid=G.line.mixed?G.line.srcLine[i].id:G.line.id;
+  return lid+':'+G.line.stations[i][0];
+}
+function stPos(i){
+  const s=G.line.stations[i];
+  return {x:s[3],y:s[4]};
+}
+function legStart(i){
+  // where the train departs from for station i
+  if(G.line.mixed){
+    const srcLine=G.line.srcLine[i], srcIdx=G.line.srcIdx[i];
+    const nb=srcLine.stations[srcIdx-1]||srcLine.stations[srcIdx+1];
+    if(nb)return{x:nb[3],y:nb[4]};
+    const p=stPos(i);return{x:p.x-60,y:p.y-40};
+  }
+  if(i===0){
+    const a=stPos(0),b=stPos(1);
+    return {x:a.x-(b.x-a.x)*0.7, y:a.y-(b.y-a.y)*0.7};
+  }
+  return stPos(i-1);
+}
+
+function stationTimeFor(name,i){
+  const speedup=1-Math.min(i*0.02,0.42);
+  const extra=G.line.mixed?0.9:1;
+  return (2800+name.replace(/\s/g,'').length*640)*speedup*extra;
+}
+
+function nextStation(){
+  if(G.idx>=G.line.stations.length){endGame(true);return;}
+  const [code,name,thai]=G.line.stations[G.idx];
+  const lineOfSt = G.line.mixed?G.line.srcLine[G.idx]:G.line;
+  $('sign').style.setProperty('--c',lineOfSt.cssVar);
+  $('stCode').textContent=code;
+  $('stThai').textContent=thai;
+  $('bannerProgress').textContent=`· ${G.idx+1} / ${G.line.stations.length}`;
+  renderTarget(name,0);
+  input.value='';
+  input.focus();
+
+  G.legFrom=legStart(G.idx);
+  G.legTo=stPos(G.idx);
+  G.stationTime=stationTimeFor(name,G.idx);
+  G.stationStart=performance.now();
+  G.finishing=false;
+
+  pulseC.setAttribute('cx',G.legTo.x);
+  pulseC.setAttribute('cy',G.legTo.y);
+  pulseC.setAttribute('stroke',lineOfSt.hex);
+
+  cancelAnimationFrame(rafId);
+  tick();
+}
+
+function placeTrain(frac){
+  const {legFrom:a,legTo:b}=G;
+  const x=a.x+(b.x-a.x)*frac, y=a.y+(b.y-a.y)*frac;
+  const ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
+  const flip=Math.abs(ang)>90?180:0;
+  trainG.setAttribute('transform',`translate(${x},${y}) rotate(${ang+flip})`);
+  headlight.setAttribute('cx',flip?-22:22);
+  cam.tx=x;cam.ty=y;
+  return {x,y};
+}
+
+function tick(){
+  if(!G||G.done||G.finishing)return;
+  const elapsed=performance.now()-G.stationStart;
+  const left=Math.max(0,G.stationTime-elapsed);
+  const frac=Math.min(1,elapsed/G.stationTime);
+  placeTrain(frac);
+  const tl=$('timeLeft');
+  tl.textContent=(left/1000).toFixed(1)+'s';
+  tl.classList.toggle('hurry',frac>0.72);
+  if(left<=0){missStation();return;}
+  rafId=requestAnimationFrame(tick);
+}
+
+function renderTarget(name,matched){
+  const t=$('target');
+  t.innerHTML='';
+  [...name].forEach((ch,i)=>{
+    const sp=document.createElement('span');
+    sp.textContent=ch===' '?'\u00A0':ch;
+    if(i<matched)sp.classList.add('done');
+    if(i===matched)sp.classList.add('cursor');
+    t.appendChild(sp);
+  });
+}
+
+input.addEventListener('input',()=>{
+  if(!G||G.done||G.finishing)return;
+  const name=G.line.stations[G.idx][1];
+  const val=input.value;
+  G.typedChars++;
+  if(name.toLowerCase().startsWith(val.toLowerCase())){
+    renderTarget(name,val.length);
+    if(val.length===name.length)clearStation();
+  }else{
+    G.errChars++;
+    G.combo=0;updateHud();
+    input.value=val.slice(0,-1);
+    const sign=$('sign');
+    sign.classList.remove('err');void sign.offsetWidth;sign.classList.add('err');
+  }
+});
+
+function clearStation(){
+  cancelAnimationFrame(rafId);
+  G.finishing=true;
+  const name=G.line.stations[G.idx][1];
+  const elapsed=performance.now()-G.stationStart;
+  const startFrac=Math.min(1,elapsed/G.stationTime);
+  const timeBonus=Math.round(Math.max(0,(G.stationTime-elapsed)/G.stationTime)*100);
+  G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);
+  G.clearedChars+=name.length;
+  const gained=100+timeBonus+G.combo*10;
+  G.score+=gained;
+  updateHud();
+  const pop=$('comboPop');
+  pop.textContent=`+${gained}${G.combo>1?`  ×${G.combo}`:''}`;
+  pop.classList.add('show');
+  setTimeout(()=>pop.classList.remove('show'),700);
+
+  // train zooms into the platform
+  const dur=240, t0=performance.now();
+  (function zoom(){
+    const p=Math.min(1,(performance.now()-t0)/dur);
+    placeTrain(startFrac+(1-startFrac)*(1-Math.pow(1-p,3)));
+    if(p<1){requestAnimationFrame(zoom);return;}
+    markStation(G.line.mixed?G.line.srcLine[G.idx].hex:G.line.hex);
+    G.idx++;
+    setTimeout(nextStation,220);
+  })();
+}
+
+function missStation(){
+  cancelAnimationFrame(rafId);
+  G.finishing=true;
+  G.lives--;G.combo=0;
+  updateHud();
+  toast(`รถไฟออกแล้ว! ${G.line.stations[G.idx][1]} 💨`,false);
+  placeTrain(1);
+  markStation('#FF5D6C');
+  G.idx++;
+  if(G.lives<=0){endGame(false);return;}
+  setTimeout(nextStation,650);
+}
+
+function markStation(color){
+  const st=stationIndex[stKey(G.idx)];
+  if(st)st.dot.setAttribute('fill',color);
+}
+
+function updateHud(){
+  $('hudScore').textContent=G.score.toLocaleString();
+  $('hudCombo').textContent='×'+G.combo;
+  const lv=$('lives');
+  lv.innerHTML='';
+  for(let i=0;i<3;i++){
+    const d=document.createElement('i');
+    if(i>=G.lives)d.classList.add('lost');
+    lv.appendChild(d);
+  }
+}
+
+/* ============================================================
+   END / NAV
+   ============================================================ */
+function endGame(win){
+  G.done=true;
+  cancelAnimationFrame(rafId);
+  cam.follow=false;
+  const mins=(performance.now()-G.startTime)/60000;
+  const cpm=Math.round(G.clearedChars/Math.max(mins,0.01));
+  const acc=G.typedChars?Math.round((G.typedChars-G.errChars)/G.typedChars*100):100;
+  const cleared=runStations().filter(({key})=>{
+    const f=stationIndex[key].dot.getAttribute('fill');
+    return f!=='#0B1220'&&f!=='#FF5D6C'&&f!=='#EAF1FB';
+  }).length;
+  $('resTitle').textContent=win?'🎉 ถึงสถานีปลายทาง! Terminus!':'💥 ตกรถไฟ… Game Over';
+  $('resTitle').className='big '+(win?'win':'lose');
+  $('resSub').textContent=`${G.line.name} · ${G.line.en||''}`;
+  $('resScore').textContent=G.score.toLocaleString();
+  $('resStations').textContent=cleared+' / '+G.line.stations.length;
+  $('resAcc').textContent=acc+'%';
+  $('resCombo').textContent='×'+G.maxCombo;
+  $('resWpm').textContent=cpm;
+  $('hud').hidden=true;
+  showScreen(scrResult);
+}
+
+$('btnRetry').addEventListener('click',()=>{
+  const line=G.line;
+  if(line.mixed){buildMenu();showScreen(scrMenu);}else startGame(line);
+});
+$('btnMenu').addEventListener('click',()=>{$('hud').hidden=true;showScreen(scrMenu);});
+$('btnQuit').addEventListener('click',()=>{
+  cancelAnimationFrame(rafId);G.done=true;cam.follow=false;
+  $('hud').hidden=true;showScreen(scrMenu);
+});
+
+function showScreen(s){
+  [scrMenu,scrMap,scrGame,scrResult].forEach(x=>x.classList.remove('active'));
+  s.classList.add('active');
+  if(s===scrGame)setTimeout(()=>{input.focus();applyCam();},60);
+  if(s===scrMap)setTimeout(applyCam,60);
+}
+
+function toast(msg,ok){
+  const t=$('toast');
+  t.textContent=msg;
+  t.className='toast show'+(ok?' ok':'');
+  setTimeout(()=>t.classList.remove('show'),1400);
+}
+
+document.addEventListener('keydown',e=>{
+  if(scrGame.classList.contains('active')&&document.activeElement!==input&&e.key.length===1)input.focus();
+});
+window.addEventListener('resize',()=>{
+  if(scrMap.classList.contains('active'))applyCam();
+  else if(scrGame.classList.contains('active'))applyCam();
+});
+</script>
+</body>
+</html>
